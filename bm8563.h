@@ -52,11 +52,11 @@ typedef struct {
     uint8_t weekday;
     uint8_t month;
     uint16_t year;
-} bm8563_time_t;
+} bm8563_datetime_t;
 
 void bm8563_init();
-void bm8563_read(bm8563_time_t *time);
-void bm8563_write(const bm8563_time_t *time);
+void bm8563_read(bm8563_datetime_t *time);
+void bm8563_write(const bm8563_datetime_t *time);
 void bm8563_close();
 
 /* These should be provided by the HAL. */
