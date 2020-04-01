@@ -44,3 +44,7 @@ rtc.seconds = 45;
 bm8563_init(i2c_read, i2c_write);
 bm8563_write(&rtc);
 ```
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.txt) for more information.
