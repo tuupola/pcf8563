@@ -1,5 +1,9 @@
 /*
 
+SPDX-License-Identifier: MIT
+
+MIT License
+
 Copyright (c) 2020 Mika Tuupola
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
