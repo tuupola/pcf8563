@@ -81,7 +81,7 @@ void bm8563_read(bm8563_time_t *time)
     time->year = _bcd2decimal(bcd) + century;
 }
 
-void bm8563_write(bm8563_time_t *time)
+void bm8563_write(const bm8563_time_t *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];

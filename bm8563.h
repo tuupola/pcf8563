@@ -56,7 +56,7 @@ typedef struct {
 
 void bm8563_init();
 void bm8563_read(bm8563_time_t *time);
-void bm8563_write(bm8563_time_t *time);
+void bm8563_write(const bm8563_time_t *time);
 void bm8563_close();
 
 /* These should be provided by the HAL. */
