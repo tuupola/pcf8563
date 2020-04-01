@@ -78,6 +78,32 @@ void bm8563_read(bm8563_time_t *time)
 
 void bm8563_write(bm8563_time_t *time)
 {
+    uint8_t bcd;
+    uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
+
+    bcd = _decimal2bcd(time->seconds);
+    buffer[0] = bcd & 0b01111111;
+
+    bcd = _decimal2bcd(time->minutes);
+    buffer[1] = bcd & 0b01111111;
+
+    bcd = _decimal2bcd(time->hours);
+    buffer[2] = bcd & 0b00111111;
+
+    bcd = _decimal2bcd(time->day);
+    buffer[3] = bcd & 0b00111111;
+
+    bcd = _decimal2bcd(time->weekday);
+    buffer[4] = bcd & 0b00000111;
+
+    bcd = _decimal2bcd(time->month);
+    buffer[5] = bcd & 0b00011111;
+
+    /* TODO: century */
+    bcd = _decimal2bcd(time->year);
+    buffer[6] = bcd & 0b11111111;
+
+    i2c_hal_master_write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
 }
 
 void bm8563_close()
