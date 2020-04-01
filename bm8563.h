@@ -55,8 +55,8 @@ typedef struct {
 } bm8563_datetime_t;
 
 /* These should be provided by the HAL. */
-typedef void (*i2c_read_t)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
-typedef void (*i2c_write_t)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
+typedef int32_t (*i2c_read_t)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
+typedef int32_t (*i2c_write_t)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
 
 void bm8563_init(i2c_read_t i2c_read_ptr, i2c_write_t i2c_write_ptr);
 void bm8563_read(bm8563_datetime_t *time);
