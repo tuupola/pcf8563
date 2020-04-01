@@ -47,6 +47,7 @@ void bm8563_read(bm8563_time_t *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
+    uint16_t century;
 
     i2c_hal_master_read(
         BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE
@@ -71,9 +72,13 @@ void bm8563_read(bm8563_time_t *time)
     bcd = buffer[5] & 0b00011111;
     time->month = _bcd2decimal(bcd);
 
-    /* TODO: century */
+    /* If century bit set assume it is 2000. Note that it seems */
+    /* that unlike PCF8563, the BM8563 does NOT automatically */
+    /* toggle the century bit when year overflows from 99 to 00. */
+    century = (buffer[5] & BM8563_CENTURY_BIT) ? 2000 : 1900;
+
     bcd = buffer[6] & 0b11111111;
-    time->year = _bcd2decimal(bcd);
+    time->year = _bcd2decimal(bcd) + century;
 }
 
 void bm8563_write(bm8563_time_t *time)
@@ -99,8 +104,12 @@ void bm8563_write(bm8563_time_t *time)
     bcd = _decimal2bcd(time->month);
     buffer[5] = bcd & 0b00011111;
 
-    /* TODO: century */
-    bcd = _decimal2bcd(time->year);
+    /* If 2000 set the century bit. */
+    if (time->year >= 2000) {
+        buffer[5] |= BM8563_CENTURY_BIT;
+    }
+
+    bcd = _decimal2bcd(time->year % 100);
     buffer[6] = bcd & 0b11111111;
 
     i2c_hal_master_write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
@@ -109,4 +118,3 @@ void bm8563_write(bm8563_time_t *time)
 void bm8563_close()
 {
 }
-

@@ -42,6 +42,7 @@ extern "C" {
 #define	BM8563_MONTH            (0x07)
 #define	BM8563_YEAR             (0x08)
 #define	BM8563_TIME_STRUCT_SIZE (0x07)
+#define	BM8563_CENTURY_BIT      (0b10000000)
 
 typedef struct {
     uint8_t seconds; /* 0 to 59 */
