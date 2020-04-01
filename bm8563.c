@@ -26,18 +26,6 @@ SOFTWARE.
 
 #include "bm8563.h"
 
-static inline void _i2c_master_write(uint8_t reg, uint8_t data, uint16_t size)
-{
-    uint8_t buffer[1];
-    buffer[0] = data;
-    i2c_hal_master_write(BM8563_ADDRESS, reg, buffer, size);
-}
-
-static inline void _i2c_master_read(uint8_t reg, uint8_t *buffer, uint16_t size)
-{
-    i2c_hal_master_read(BM8563_ADDRESS, reg, buffer, size);
-}
-
 uint8_t _decimal2bcd (uint8_t decimal)
 {
     return (((decimal / 10) << 4) | (decimal % 10));
@@ -50,8 +38,9 @@ uint8_t _bcd2decimal(uint8_t bcd)
 
 void bm8563_init()
 {
-    _i2c_master_write(BM8563_CONTROL_STATUS_1, 0x00, 1);
-    _i2c_master_write(BM8563_CONTROL_STATUS_2, 0x00, 1);
+    uint8_t clear = 0x00;
+    i2c_hal_master_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
+    i2c_hal_master_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
 }
 
 void bm8563_read(bm8563_time_t *time)
@@ -59,7 +48,9 @@ void bm8563_read(bm8563_time_t *time)
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
 
-    _i2c_master_read(BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
+    i2c_hal_master_read(
+        BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE
+    );
 
     /* TODO: low voltage warning */
     bcd = buffer[0] & 0b01111111;
