@@ -45,13 +45,13 @@ extern "C" {
 #define	BM8563_CENTURY_BIT      (0b10000000)
 
 typedef struct {
-    uint8_t seconds; /* 0 to 59 */
-    uint8_t minutes; /* 0 to 59 */
-    uint8_t hours;   /* 0 to 23 */
-    uint8_t day;     /* 1 to 31 */
-    uint8_t weekday; /* 0 to 6 */
-    uint8_t month;   /* 1 to 12 */
-    uint16_t year;   /* 0 to 99 */
+    uint8_t seconds;
+    uint8_t minutes;
+    uint8_t hours;
+    uint8_t day;
+    uint8_t weekday;
+    uint8_t month;
+    uint16_t year;
 } bm8563_time_t;
 
 void bm8563_init();
@@ -60,10 +60,8 @@ void bm8563_write(const bm8563_time_t *time);
 void bm8563_close();
 
 /* These should be provided by the HAL. */
-extern int32_t i2c_hal_master_init();
 extern int32_t i2c_hal_master_read(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
 extern int32_t i2c_hal_master_write(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
-extern int32_t i2c_hal_master_close();
 
 #ifdef __cplusplus
 }
