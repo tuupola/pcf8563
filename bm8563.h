@@ -54,14 +54,14 @@ typedef struct {
     uint16_t year;
 } bm8563_datetime_t;
 
-void bm8563_init();
+/* These should be provided by the HAL. */
+typedef void (*i2c_read_t)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
+typedef void (*i2c_write_t)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
+
+void bm8563_init(i2c_read_t i2c_read_ptr, i2c_write_t i2c_write_ptr);
 void bm8563_read(bm8563_datetime_t *time);
 void bm8563_write(const bm8563_datetime_t *time);
 void bm8563_close();
-
-/* These should be provided by the HAL. */
-extern int32_t i2c_hal_master_read(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
-extern int32_t i2c_hal_master_write(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
 
 #ifdef __cplusplus
 }

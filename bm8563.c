@@ -26,6 +26,9 @@ SOFTWARE.
 
 #include "bm8563.h"
 
+i2c_read_t i2c_read;
+i2c_write_t i2c_write;
+
 uint8_t _decimal2bcd (uint8_t decimal)
 {
     return (((decimal / 10) << 4) | (decimal % 10));
@@ -36,11 +39,14 @@ uint8_t _bcd2decimal(uint8_t bcd)
    return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
-void bm8563_init()
+void bm8563_init(i2c_read_t i2c_read_ptr, i2c_write_t i2c_write_ptr)
 {
     uint8_t clear = 0x00;
-    i2c_hal_master_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
-    i2c_hal_master_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
+    i2c_read = i2c_read_ptr;
+    i2c_write = i2c_write_ptr;
+
+    i2c_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
+    i2c_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
 }
 
 void bm8563_read(bm8563_datetime_t *time)
@@ -49,7 +55,7 @@ void bm8563_read(bm8563_datetime_t *time)
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
     uint16_t century;
 
-    i2c_hal_master_read(
+    i2c_read(
         BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE
     );
 
@@ -112,7 +118,7 @@ void bm8563_write(const bm8563_datetime_t *time)
     bcd = _decimal2bcd(time->year % 100);
     buffer[6] = bcd & 0b11111111;
 
-    i2c_hal_master_write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
+    i2c_write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
 }
 
 void bm8563_close()
