@@ -30,8 +30,8 @@ SOFTWARE.
 
 #include "bm8563.h"
 
-i2c_read_t i2c_read;
-i2c_write_t i2c_write;
+i2c_read_fn i2c_read;
+i2c_write_fn i2c_write;
 
 uint8_t _decimal2bcd (uint8_t decimal)
 {
@@ -43,7 +43,7 @@ uint8_t _bcd2decimal(uint8_t bcd)
    return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
-void bm8563_init(i2c_read_t i2c_read_ptr, i2c_write_t i2c_write_ptr)
+void bm8563_init(i2c_read_fn i2c_read_ptr, i2c_write_fn i2c_write_ptr)
 {
     uint8_t clear = 0x00;
     i2c_read = i2c_read_ptr;
