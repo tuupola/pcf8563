@@ -48,6 +48,8 @@ extern "C" {
 #define	BM8563_TIME_STRUCT_SIZE (0x07)
 #define	BM8563_CENTURY_BIT      (0b10000000)
 
+#define BM8563_ERROR_OK         (0x00)
+
 typedef struct {
     uint8_t seconds;
     uint8_t minutes;
@@ -62,10 +64,12 @@ typedef struct {
 typedef int32_t (*i2c_read_fn)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
 typedef int32_t (*i2c_write_fn)(uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size);
 
-void bm8563_init(i2c_read_fn i2c_read_ptr, i2c_write_fn i2c_write_ptr);
-void bm8563_read(bm8563_datetime_t *time);
-void bm8563_write(const bm8563_datetime_t *time);
-void bm8563_close();
+typedef int32_t bme8563_err_t;
+
+bme8563_err_t bm8563_init(i2c_read_fn i2c_read_ptr, i2c_write_fn i2c_write_ptr);
+bme8563_err_t bm8563_read(bm8563_datetime_t *time);
+bme8563_err_t bm8563_write(const bm8563_datetime_t *time);
+bme8563_err_t bm8563_close();
 
 #ifdef __cplusplus
 }

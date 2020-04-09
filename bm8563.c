@@ -43,25 +43,34 @@ uint8_t _bcd2decimal(uint8_t bcd)
    return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
-void bm8563_init(i2c_read_fn i2c_read_ptr, i2c_write_fn i2c_write_ptr)
+bme8563_err_t bm8563_init(i2c_read_fn i2c_read_ptr, i2c_write_fn i2c_write_ptr)
 {
     uint8_t clear = 0x00;
+    int32_t status;
     i2c_read = i2c_read_ptr;
     i2c_write = i2c_write_ptr;
 
-    i2c_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
-    i2c_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
+    status = i2c_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
+    if (BM8563_ERROR_OK != status) {
+        return status;
+    }
+    return i2c_write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
 }
 
-void bm8563_read(bm8563_datetime_t *time)
+bme8563_err_t bm8563_read(bm8563_datetime_t *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
     uint16_t century;
+    int32_t status;
 
-    i2c_read(
+    status = i2c_read(
         BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE
     );
+
+    if (BM8563_ERROR_OK != status) {
+        return status;
+    }
 
     /* TODO: low voltage warning */
     bcd = buffer[0] & 0b01111111;
@@ -89,9 +98,11 @@ void bm8563_read(bm8563_datetime_t *time)
 
     bcd = buffer[6] & 0b11111111;
     time->year = _bcd2decimal(bcd) + century;
+
+    return BM8563_ERROR_OK;
 }
 
-void bm8563_write(const bm8563_datetime_t *time)
+bme8563_err_t bm8563_write(const bm8563_datetime_t *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
@@ -122,9 +133,10 @@ void bm8563_write(const bm8563_datetime_t *time)
     bcd = _decimal2bcd(time->year % 100);
     buffer[6] = bcd & 0b11111111;
 
-    i2c_write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
+    return i2c_write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
 }
 
-void bm8563_close()
+bme8563_err_t bm8563_close()
 {
+    return BM8563_ERROR_OK;
 }
