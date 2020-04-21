@@ -32,6 +32,7 @@ SPDX-License-Identifier: MIT
 */
 
 #include <stdint.h>
+#include <time.h>
 
 #include "bm8563.h"
 
@@ -57,10 +58,10 @@ bm8563_err_t bm8563_init(bm8563_t *bm)
     return bm->write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
 }
 
-bm8563_err_t bm8563_read(bm8563_t *bm, bm8563_datetime_t *time)
+bm8563_err_t bm8563_read(bm8563_t *bm, struct tm *time)
 {
     uint8_t bcd;
-    uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
+    uint8_t buffer[64];
     uint16_t century;
     int32_t status;
 
@@ -73,64 +74,82 @@ bm8563_err_t bm8563_read(bm8563_t *bm, bm8563_datetime_t *time)
     }
 
     /* TODO: low voltage warning */
+
+    /* 0..59 */
     bcd = buffer[0] & 0b01111111;
-    time->seconds = bcd2decimal(bcd);
+    time->tm_sec = bcd2decimal(bcd);
 
+    /* 0..59 */
     bcd = buffer[1] & 0b01111111;
-    time->minutes = bcd2decimal(bcd);
+    time->tm_min = bcd2decimal(bcd);
 
+    /* 0..23 */
     bcd = buffer[2] & 0b00111111;
-    time->hours = bcd2decimal(bcd);
+    time->tm_hour = bcd2decimal(bcd);
 
+    /* 1..31 */
     bcd = buffer[3] & 0b00111111;
-    time->day = bcd2decimal(bcd);
+    time->tm_mday = bcd2decimal(bcd);
 
+    /* 0..6 */
     bcd = buffer[4] & 0b00000111;
-    time->weekday = bcd2decimal(bcd);
+    time->tm_wday = bcd2decimal(bcd);
 
+    /* 0..11 */
     bcd = buffer[5] & 0b00011111;
-    time->month = bcd2decimal(bcd);
+    time->tm_mon = bcd2decimal(bcd) - 1;
 
     /* If century bit set assume it is 2000. Note that it seems */
     /* that unlike PCF8563, the BM8563 does NOT automatically */
     /* toggle the century bit when year overflows from 99 to 00. */
-    century = (buffer[5] & BM8563_CENTURY_BIT) ? 2000 : 1900;
+    century = (buffer[5] & BM8563_CENTURY_BIT) ? 100 : 0;
 
+    /* Number of years since 1900 */
     bcd = buffer[6] & 0b11111111;
-    time->year = bcd2decimal(bcd) + century;
+    time->tm_year = bcd2decimal(bcd) + century;
+
+    /* Calculate tm_yday. */
+    mktime(time);
 
     return BM8563_ERROR_OK;
 }
 
-bm8563_err_t bm8563_write(bm8563_t *bm, const bm8563_datetime_t *time)
+bm8563_err_t bm8563_write(bm8563_t *bm, const struct tm *time)
 {
     uint8_t bcd;
-    uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
+    uint8_t buffer[64];
 
-    bcd = decimal2bcd(time->seconds);
+    /* 0..59 */
+    bcd = decimal2bcd(time->tm_sec);
     buffer[0] = bcd & 0b01111111;
 
-    bcd = decimal2bcd(time->minutes);
+    /* 0..59 */
+    bcd = decimal2bcd(time->tm_min);
     buffer[1] = bcd & 0b01111111;
 
-    bcd = decimal2bcd(time->hours);
+    /* 0..23 */
+    bcd = decimal2bcd(time->tm_hour);
     buffer[2] = bcd & 0b00111111;
 
-    bcd = decimal2bcd(time->day);
+    /* 1..31 */
+    bcd = decimal2bcd(time->tm_mday);
     buffer[3] = bcd & 0b00111111;
 
-    bcd = decimal2bcd(time->weekday);
+    /* 0..6 */
+    bcd = decimal2bcd(time->tm_wday);
     buffer[4] = bcd & 0b00000111;
 
-    bcd = decimal2bcd(time->month);
+    /* 1..12 */
+    bcd = decimal2bcd(time->tm_mon + 1);
     buffer[5] = bcd & 0b00011111;
 
     /* If 2000 set the century bit. */
-    if (time->year >= 2000) {
+    if (time->tm_year >= 100) {
         buffer[5] |= BM8563_CENTURY_BIT;
     }
 
-    bcd = decimal2bcd(time->year % 100);
+    /* 0..99 */
+    bcd = decimal2bcd(time->tm_year % 100);
     buffer[6] = bcd & 0b11111111;
 
     return bm->write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);

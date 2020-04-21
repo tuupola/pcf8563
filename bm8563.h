@@ -39,6 +39,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <time.h>
 
 #define	BM8563_ADDRESS	        (0x51)
 #define	BM8563_CONTROL_STATUS_1 (0x00)
@@ -55,16 +56,6 @@ extern "C" {
 
 #define BM8563_ERROR_OK         (0x00)
 
-typedef struct {
-    uint8_t seconds;
-    uint8_t minutes;
-    uint8_t hours;
-    uint8_t day;
-    uint8_t weekday;
-    uint8_t month;
-    uint16_t year;
-} bm8563_datetime_t;
-
 /* These should be provided by the HAL. */
 typedef struct {
     int32_t (* read)(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
@@ -74,8 +65,8 @@ typedef struct {
 typedef int32_t bm8563_err_t;
 
 bm8563_err_t bm8563_init(bm8563_t *bm);
-bm8563_err_t bm8563_read(bm8563_t *bm, bm8563_datetime_t *time);
-bm8563_err_t bm8563_write(bm8563_t *bm, const bm8563_datetime_t *time);
+bm8563_err_t bm8563_read(bm8563_t *bm, struct tm *time);
+bm8563_err_t bm8563_write(bm8563_t *bm, const struct tm *time);
 bm8563_err_t bm8563_close(bm8563_t *bm);
 
 #ifdef __cplusplus
