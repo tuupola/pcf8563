@@ -61,12 +61,12 @@ bm8563_err_t bm8563_init(bm8563_t *bm)
 bm8563_err_t bm8563_read(bm8563_t *bm, struct tm *time)
 {
     uint8_t bcd;
-    uint8_t buffer[64];
+    uint8_t buffer[BM8563_TIME_SIZE] = {0};
     uint16_t century;
     int32_t status;
 
     status = bm->read(
-        BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE
+        BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_SIZE
     );
 
     if (BM8563_ERROR_OK != status) {
@@ -117,7 +117,7 @@ bm8563_err_t bm8563_read(bm8563_t *bm, struct tm *time)
 bm8563_err_t bm8563_write(bm8563_t *bm, const struct tm *time)
 {
     uint8_t bcd;
-    uint8_t buffer[64];
+    uint8_t buffer[BM8563_TIME_SIZE] = {0};
 
     /* 0..59 */
     bcd = decimal2bcd(time->tm_sec);
@@ -152,7 +152,7 @@ bm8563_err_t bm8563_write(bm8563_t *bm, const struct tm *time)
     bcd = decimal2bcd(time->tm_year % 100);
     buffer[6] = bcd & 0b11111111;
 
-    return bm->write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
+    return bm->write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_SIZE);
 }
 
 bm8563_err_t bm8563_close(bm8563_t *bm)
