@@ -30,9 +30,6 @@ SOFTWARE.
 
 #include "bm8563.h"
 
-static i2c_read_fn i2c_read_function;
-static i2c_write_fn i2c_write_function;
-
 uint8_t _decimal2bcd (uint8_t decimal)
 {
     return (((decimal / 10) << 4) | (decimal % 10));
@@ -43,30 +40,26 @@ uint8_t _bcd2decimal(uint8_t bcd)
    return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
-bme8563_err_t bm8563_init(i2c_read_fn i2c_read_ptr, i2c_write_fn i2c_write_ptr)
+bme8563_err_t bm8563_init(bm8563_t *bm)
 {
     uint8_t clear = 0x00;
     int32_t status;
 
-    /* Assign pointers to the glue functions */
-    i2c_read_function = i2c_read_ptr;
-    i2c_write_function = i2c_write_ptr;
-
-    status = i2c_write_function(BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
+    status = bm->write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
     if (BM8563_ERROR_OK != status) {
         return status;
     }
-    return i2c_write_function(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
+    return bm->write(BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
 }
 
-bme8563_err_t bm8563_read(bm8563_datetime_t *time)
+bme8563_err_t bm8563_read(bm8563_t *bm, bm8563_datetime_t *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
     uint16_t century;
     int32_t status;
 
-    status = i2c_read_function(
+    status = bm->read(
         BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE
     );
 
@@ -104,7 +97,7 @@ bme8563_err_t bm8563_read(bm8563_datetime_t *time)
     return BM8563_ERROR_OK;
 }
 
-bme8563_err_t bm8563_write(const bm8563_datetime_t *time)
+bme8563_err_t bm8563_write(bm8563_t *bm, const bm8563_datetime_t *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_STRUCT_SIZE];
@@ -135,10 +128,10 @@ bme8563_err_t bm8563_write(const bm8563_datetime_t *time)
     bcd = _decimal2bcd(time->year % 100);
     buffer[6] = bcd & 0b11111111;
 
-    return i2c_write_function(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
+    return bm->write(BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_STRUCT_SIZE);
 }
 
-bme8563_err_t bm8563_close()
+bme8563_err_t bm8563_close(bm8563_t *bm)
 {
     return BM8563_ERROR_OK;
 }
