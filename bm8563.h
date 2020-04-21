@@ -66,12 +66,12 @@ typedef struct {
     int32_t (* write)(uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size);
 } bm8563_t;
 
-typedef int32_t bme8563_err_t;
+typedef int32_t bm8563_err_t;
 
-bme8563_err_t bm8563_init(bm8563_t *bm);
-bme8563_err_t bm8563_read(bm8563_t *bm, bm8563_datetime_t *time);
-bme8563_err_t bm8563_write(bm8563_t *bm, const bm8563_datetime_t *time);
-bme8563_err_t bm8563_close(bm8563_t *bm);
+bm8563_err_t bm8563_init(bm8563_t *bm);
+bm8563_err_t bm8563_read(bm8563_t *bm, bm8563_datetime_t *time);
+bm8563_err_t bm8563_write(bm8563_t *bm, const bm8563_datetime_t *time);
+bm8563_err_t bm8563_close(bm8563_t *bm);
 
 #ifdef __cplusplus
 }
