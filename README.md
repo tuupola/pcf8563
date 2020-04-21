@@ -12,10 +12,13 @@ Where `address` is the I2C address, `reg` is the register to read or write, `buf
 ## Read RTC date and time
 
 ```c
+#include <time.h>
+
 #include "bm8563.h"
 #include "your-i2c-hal.h"
 
-bm8563_datetime_t rtc;
+struct tm rtc;
+char buffer[128];
 bm8563_t bm;
 
 /* Add pointers to HAL functions. */
@@ -25,31 +28,33 @@ bm.write = &i2c_write;
 bm8563_init(&bm);
 bm8563_read(&bm, &rtc);
 
-printf(
-    "RTC: %04d-%02d-%02d %02d:%02d:%02d\n",
-    rtc.year, rtc.month, rtc.day, rtc.hours, rtc.minutes, rtc.seconds
-);
+strftime(buffer, 128 ,"%c (day %j)" , &rtc);
+printf("RTC: %s\n", buffer);
+
 ```
 
 ## Set RTC date and time
 
 ```c
+#include <time.h>
+
 #include "bm8563.h"
 #include "your-i2c-hal.h"
 
-bm8563_datetime_t rtc;
+struct tm rtc;
 bm8563_t bm;
 
 /* Add pointers to HAL functions. */
 bm.read = &i2c_read;
 bm.write = &i2c_write;
 
-rtc.year = 2020;
-rtc.month = 12;
-rtc.day = 31;
-rtc.hours = 23;
-rtc.minutes = 59;
-rtc.seconds = 45;
+/* 2020-12-31 23:59:45 */
+rtc.tm_year = 2020 - 1900;
+rtc.tm_mon = 12 - 1;
+rtc.tm_mday = 31;
+rtc.tm_hour = 23;
+rtc.tm_min = 59;
+rtc.tm_sec = 45;
 
 bm8563_init(&bm);
 bm8563_write(&bm, &rtc);
