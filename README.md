@@ -1,13 +1,13 @@
 # Hardware agnostic I2C driver for BM8563 RTC
 
-To use this library you must to provide HAL functions for both reading and writing the I2C bus. Function definitions must be the following.
+To use this library you must to provide functions for both reading and writing the I2C bus. Function definitions must be the following.
 
 ```c
 int32_t i2c_read(uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
 int32_t i2c_write(uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size);
 ```
 
-Where `address` is the I2C address, `reg` is the register to read or write, `buffer` holds the data to write or read into and `size` is the amount of data to read or write. For example HAL implementation see [ESP I2C master HAL](https://github.com/tuupola/esp_i2c_hal). For working example see [M5StickC kitchen sink](https://github.com/tuupola/esp_m5stick).
+Where `address` is the I2C address, `reg` is the register to read or write, `buffer` holds the data to write or read into and `size` is the amount of data to read or write. For example  implementation see [ESP I2C helpers](https://github.com/tuupola/esp_i2c_hal). For working example see [M5StickC kitchen sink](https://github.com/tuupola/esp_m5stick).
 
 ## Read RTC date and time
 
@@ -15,15 +15,15 @@ Where `address` is the I2C address, `reg` is the register to read or write, `buf
 #include <time.h>
 
 #include "bm8563.h"
-#include "your-i2c-hal.h"
+#include "user_i2c.h"
 
 struct tm rtc;
 char buffer[128];
 bm8563_t bm;
 
-/* Add pointers to HAL functions. */
-bm.read = &i2c_read;
-bm.write = &i2c_write;
+/* Add pointers to user provided functions. */
+bm.read = &user_i2c_read;
+bm.write = &user_i2c_write;
 
 bm8563_init(&bm);
 bm8563_read(&bm, &rtc);
@@ -39,14 +39,14 @@ printf("RTC: %s\n", buffer);
 #include <time.h>
 
 #include "bm8563.h"
-#include "your-i2c-hal.h"
+#include "user_i2c.h"
 
 struct tm rtc;
 bm8563_t bm;
 
-/* Add pointers to HAL functions. */
-bm.read = &i2c_read;
-bm.write = &i2c_write;
+/* Add pointers to user provided functions. */
+bm.read = &user_i2c_read;
+bm.write = &user_i2c_write;
 
 /* 2020-12-31 23:59:45 */
 rtc.tm_year = 2020 - 1900;
