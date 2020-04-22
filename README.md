@@ -1,5 +1,6 @@
 # Hardware agnostic I2C driver for BM8563 RTC
 
+![C/C++ CI](https://github.com/tuupola/bm8563/workflows/C/C++%20CI/badge.svg)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 To use this library you must to provide functions for both reading and writing the I2C bus. Function definitions must be the following.
