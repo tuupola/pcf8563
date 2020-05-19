@@ -46,7 +46,7 @@ static uint8_t bcd2decimal(uint8_t bcd)
    return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
-bm8563_err_t bm8563_init(bm8563_t *bm)
+bm8563_err_t bm8563_init(const bm8563_t *bm)
 {
     uint8_t clear = 0x00;
     int32_t status;
@@ -58,7 +58,7 @@ bm8563_err_t bm8563_init(bm8563_t *bm)
     return bm->write(bm->handle, BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
 }
 
-bm8563_err_t bm8563_read(bm8563_t *bm, struct tm *time)
+bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_SIZE] = {0};
@@ -114,7 +114,7 @@ bm8563_err_t bm8563_read(bm8563_t *bm, struct tm *time)
     return BM8563_ERROR_OK;
 }
 
-bm8563_err_t bm8563_write(bm8563_t *bm, const struct tm *time)
+bm8563_err_t bm8563_write(const bm8563_t *bm, const struct tm *time)
 {
     uint8_t bcd;
     uint8_t buffer[BM8563_TIME_SIZE] = {0};
@@ -155,7 +155,7 @@ bm8563_err_t bm8563_write(bm8563_t *bm, const struct tm *time)
     return bm->write(bm->handle, BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_SIZE);
 }
 
-bm8563_err_t bm8563_close(bm8563_t *bm)
+bm8563_err_t bm8563_close(const bm8563_t *bm)
 {
     return BM8563_ERROR_OK;
 }

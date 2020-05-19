@@ -65,10 +65,10 @@ typedef struct {
 
 typedef int32_t bm8563_err_t;
 
-bm8563_err_t bm8563_init(bm8563_t *bm);
-bm8563_err_t bm8563_read(bm8563_t *bm, struct tm *time);
-bm8563_err_t bm8563_write(bm8563_t *bm, const struct tm *time);
-bm8563_err_t bm8563_close(bm8563_t *bm);
+bm8563_err_t bm8563_init(const bm8563_t *bm);
+bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time);
+bm8563_err_t bm8563_write(const bm8563_t *bm, const struct tm *time);
+bm8563_err_t bm8563_close(const bm8563_t *bm);
 
 #ifdef __cplusplus
 }
