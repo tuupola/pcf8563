@@ -45,7 +45,7 @@ TEST should_fail_init(void) {
     bm.read = &mock_failing_i2c_read;
     bm.write = &mock_failing_i2c_write;
 
-    ASSERT_FALSE(BM8563_ERROR_OK == bm8563_init(&bm));
+    ASSERT_FALSE(BM8563_OK == bm8563_init(&bm));
     PASS();
 }
 
@@ -54,7 +54,7 @@ TEST should_init(void) {
     bm.read = &mock_i2c_read;
     bm.write = &mock_i2c_write;
 
-    ASSERT(BM8563_ERROR_OK == bm8563_init(&bm));
+    ASSERT(BM8563_OK == bm8563_init(&bm));
     PASS();
 }
 
@@ -64,8 +64,8 @@ TEST should_fail_read_time(void) {
     bm.read = &mock_failing_i2c_read;
     bm.write = &mock_i2c_write;
 
-    ASSERT(BM8563_ERROR_OK == bm8563_init(&bm));
-    ASSERT_FALSE(BM8563_ERROR_OK == bm8563_read(&bm, &datetime));
+    ASSERT(BM8563_OK == bm8563_init(&bm));
+    ASSERT_FALSE(BM8563_OK == bm8563_read(&bm, &datetime));
     PASS();
 }
 
@@ -86,9 +86,9 @@ TEST should_read_and_write_time(void) {
     /* Years since 1900. */
     datetime.tm_year = 2002 - 1900;
 
-    ASSERT(BM8563_ERROR_OK == bm8563_init(&bm));
-    ASSERT(BM8563_ERROR_OK == bm8563_write(&bm, &datetime));
-    ASSERT(BM8563_ERROR_OK == bm8563_read(&bm, &datetime2));
+    ASSERT(BM8563_OK == bm8563_init(&bm));
+    ASSERT(BM8563_OK == bm8563_write(&bm, &datetime));
+    ASSERT(BM8563_OK == bm8563_read(&bm, &datetime2));
 
     PASS();
 }
@@ -110,10 +110,10 @@ TEST should_handle_century(void) {
     /* Years since 1900. */
     datetime.tm_year = 2006 - 1900;
 
-    ASSERT(BM8563_ERROR_OK == bm8563_init(&bm));
-    ASSERT(BM8563_ERROR_OK == bm8563_write(&bm, &datetime));
+    ASSERT(BM8563_OK == bm8563_init(&bm));
+    ASSERT(BM8563_OK == bm8563_write(&bm, &datetime));
 
-    ASSERT(BM8563_ERROR_OK == bm8563_read(&bm, &datetime2));
+    ASSERT(BM8563_OK == bm8563_read(&bm, &datetime2));
 
     strftime(buffer, 128 ,"%c (day %j)" , &datetime2);
     ASSERT_STR_EQ("Sun Dec 24 23:15:20 2006 (day 358)", &buffer);

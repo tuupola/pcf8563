@@ -52,7 +52,7 @@ bm8563_err_t bm8563_init(const bm8563_t *bm)
     int32_t status;
 
     status = bm->write(bm->handle, BM8563_ADDRESS, BM8563_CONTROL_STATUS_1, &clear, 1);
-    if (BM8563_ERROR_OK != status) {
+    if (BM8563_OK != status) {
         return status;
     }
     return bm->write(bm->handle, BM8563_ADDRESS, BM8563_CONTROL_STATUS_2, &clear, 1);
@@ -69,7 +69,7 @@ bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
         bm->handle, BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_SIZE
     );
 
-    if (BM8563_ERROR_OK != status) {
+    if (BM8563_OK != status) {
         return status;
     }
 
@@ -111,7 +111,7 @@ bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
     /* Calculate tm_yday. */
     mktime(time);
 
-    return BM8563_ERROR_OK;
+    return BM8563_OK;
 }
 
 bm8563_err_t bm8563_write(const bm8563_t *bm, const struct tm *time)
@@ -157,5 +157,5 @@ bm8563_err_t bm8563_write(const bm8563_t *bm, const struct tm *time)
 
 bm8563_err_t bm8563_close(const bm8563_t *bm)
 {
-    return BM8563_ERROR_OK;
+    return BM8563_OK;
 }
