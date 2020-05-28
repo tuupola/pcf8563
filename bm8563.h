@@ -54,7 +54,8 @@ extern "C" {
 #define	BM8563_TIME_SIZE        (0x07)
 #define	BM8563_CENTURY_BIT      (0b10000000)
 
-#define BM8563_OK         (0x00)
+#define BM8563_OK               (0x00)
+#define BM8563_ERR_LOW_VOLTAGE  (0x80)
 
 /* These should be provided by the HAL. */
 typedef struct {

@@ -73,8 +73,6 @@ bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
         return status;
     }
 
-    /* TODO: low voltage warning */
-
     /* 0..59 */
     bcd = buffer[0] & 0b01111111;
     time->tm_sec = bcd2decimal(bcd);
@@ -110,6 +108,11 @@ bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
 
     /* Calculate tm_yday. */
     mktime(time);
+
+    /* low voltage warning */
+    if (buffer[0] & 0b10000000) {
+        return BM8563_ERR_LOW_VOLTAGE;
+    }
 
     return BM8563_OK;
 }

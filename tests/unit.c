@@ -69,9 +69,20 @@ TEST should_fail_read_time(void) {
     PASS();
 }
 
+TEST should_get_low_voltage_warning(void) {
+    struct tm datetime = {0};
+    bm8563_t bm;
+    bm.read = &mock_i2c_low_voltage_read;
+    bm.write = &mock_i2c_write;
+
+    ASSERT(BM8563_OK == bm8563_init(&bm));
+    ASSERT(BM8563_ERR_LOW_VOLTAGE == bm8563_read(&bm, &datetime));
+    PASS();
+}
+
 TEST should_read_and_write_time(void) {
-    struct tm datetime = {0};;
-    struct tm datetime2 = {0};;
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
     char buffer[128];
     bm8563_t bm;
     bm.read = &mock_i2c_read;
@@ -129,6 +140,7 @@ int main(int argc, char **argv) {
     RUN_TEST(should_fail_init);
     RUN_TEST(should_init);
     RUN_TEST(should_fail_read_time);
+    RUN_TEST(should_get_low_voltage_warning);
     RUN_TEST(should_read_and_write_time);
     RUN_TEST(should_handle_century);
 
