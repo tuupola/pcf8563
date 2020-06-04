@@ -43,7 +43,15 @@ extern "C" {
 
 #define	BM8563_ADDRESS	        (0x51)
 #define	BM8563_CONTROL_STATUS_1 (0x00)
+#define	BM8563_TESTC            (0b00001000)
+#define	BM8563_STOP             (0b00100000)
+#define	BM8563_TEST1            (0b10000000)
 #define	BM8563_CONTROL_STATUS_2 (0x01)
+#define	BM8563_TIE              (0b00000001)
+#define	BM8563_AIE              (0b00000010)
+#define	BM8563_TF               (0b00000100)
+#define	BM8563_AF               (0b00001000)
+#define	BM8563_TI_TP            (0b00010000)
 #define	BM8563_SECONDS          (0x02)
 #define	BM8563_MINUTES          (0x03)
 #define	BM8563_HOURS            (0x04)
@@ -54,6 +62,20 @@ extern "C" {
 #define	BM8563_TIME_SIZE        (0x07)
 #define	BM8563_CENTURY_BIT      (0b10000000)
 
+#define BM8563_MINUTE_ALARM     (0x09)
+#define BM8563_HOUR_ALARM       (0x0a)
+#define BM8563_DAY_ALARM        (0x0b)
+#define BM8563_WEEKDAY_ALARM    (0x0c)
+#define BM8563_ALARM_ENABLE     (0b10000000)
+#define BM8563_ALARM_NONE       (0xff)
+#define BM8563_ALARM_SIZE       (0x04)
+
+/* IOCTL commands */
+#define BM8563_ALARM_SET        (0x0900)
+#define BM8563_ALARM_READ       (0x0901)
+
+/* Status codes. */
+#define BM8563_ERROR_NOTTY      (-1)
 #define BM8563_OK               (0x00)
 #define BM8563_ERR_LOW_VOLTAGE  (0x80)
 
@@ -69,6 +91,7 @@ typedef int32_t bm8563_err_t;
 bm8563_err_t bm8563_init(const bm8563_t *bm);
 bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time);
 bm8563_err_t bm8563_write(const bm8563_t *bm, const struct tm *time);
+bm8563_err_t bm8563_ioctl(const bm8563_t *bm, int16_t command, void *buffer);
 bm8563_err_t bm8563_close(const bm8563_t *bm);
 
 #ifdef __cplusplus

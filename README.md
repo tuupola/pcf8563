@@ -69,6 +69,52 @@ bm8563_init(&bm);
 bm8563_write(&bm, &rtc);
 ```
 
+## Set RTC alarm
+
+```c
+#include <time.h>
+
+#include "bm8563.h"
+#include "user_i2c.h"
+
+struct tm rtc_alarm;
+bm8563_t bm;
+
+/* Add pointers to user provided functions. */
+bm.read = &user_i2c_read;
+bm.write = &user_i2c_write;
+
+bm8563_init(&bm);
+
+/* Add alarm every day at 21:30. */
+rtc_alarm.tm_min = 30;
+rtc_alarm.tm_hour = 21;
+rtc_alarm.tm_mday = BM8563_ALARM_NONE;
+rtc_alarm.tm_wday = BM8563_ALARM_NONE;
+
+bm8563_ioctl(&bm, BM8563_ALARM_SET, &rtc_alarm);
+```
+
+## Read RTC alarm
+
+```c
+#include <time.h>
+
+#include "bm8563.h"
+#include "user_i2c.h"
+
+struct tm rtc_alarm;
+bm8563_t bm;
+
+/* Add pointers to user provided functions. */
+bm.read = &user_i2c_read;
+bm.write = &user_i2c_write;
+
+bm8563_init(&bm);
+
+bm8563_ioctl(&bm, BM8563_ALARM_READ, &rtc_alarm);
+```
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.txt) for more information.
