@@ -77,6 +77,7 @@ bm8563_write(&bm, &rtc);
 #include "bm8563.h"
 #include "user_i2c.h"
 
+uint8_t tmp;
 struct tm rtc_alarm;
 bm8563_t bm;
 
@@ -93,9 +94,19 @@ rtc_alarm.tm_mday = BM8563_ALARM_NONE;
 rtc_alarm.tm_wday = BM8563_ALARM_NONE;
 
 bm8563_ioctl(&bm, BM8563_ALARM_SET, &rtc_alarm);
+
+/* Later check if alarm is triggered. */
+bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_READ, &tmp);
+if (tmp & BM8563_AF) {
+    printf("Got alarm!");
+};
+
+/* And clear the alarm flag. */
+tmp &= ~BM8563_AF;
+bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_WRITE, &tmp);
 ```
 
-## Read RTC alarm
+## Read currently set RTC alarm
 
 ```c
 #include <time.h>
