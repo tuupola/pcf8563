@@ -33,6 +33,8 @@ SPDX-License-Identifier: MIT
 
 #include <stdint.h>
 
+#define MOCK_I2C_ERROR  (3)
+
 int32_t mock_i2c_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size);
 int32_t mock_i2c_write(void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size);
 
