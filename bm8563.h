@@ -67,7 +67,6 @@ extern "C" {
 #define BM8563_DAY_ALARM        (0x0b)
 #define BM8563_WEEKDAY_ALARM    (0x0c)
 #define BM8563_ALARM_DISABLE    (0b10000000)
-#define BM8563_ALARM_ENABLE     (0b00000000)
 #define BM8563_ALARM_NONE       (0xff)
 #define BM8563_ALARM_SIZE       (0x04)
 

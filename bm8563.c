@@ -36,12 +36,12 @@ SPDX-License-Identifier: MIT
 
 #include "bm8563.h"
 
-static uint8_t decimal2bcd (uint8_t decimal)
+static inline uint8_t decimal2bcd (uint8_t decimal)
 {
     return (((decimal / 10) << 4) | (decimal % 10));
 }
 
-static uint8_t bcd2decimal(uint8_t bcd)
+static inline uint8_t bcd2decimal(uint8_t bcd)
 {
    return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
@@ -61,12 +61,12 @@ bm8563_err_t bm8563_init(const bm8563_t *bm)
 bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
 {
     uint8_t bcd;
-    uint8_t buffer[BM8563_TIME_SIZE] = {0};
+    uint8_t data[BM8563_TIME_SIZE] = {0};
     uint16_t century;
     int32_t status;
 
     status = bm->read(
-        bm->handle, BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_SIZE
+        bm->handle, BM8563_ADDRESS, BM8563_SECONDS, data, BM8563_TIME_SIZE
     );
 
     if (BM8563_OK != status) {
@@ -74,43 +74,43 @@ bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
     }
 
     /* 0..59 */
-    bcd = buffer[0] & 0b01111111;
+    bcd = data[0] & 0b01111111;
     time->tm_sec = bcd2decimal(bcd);
 
     /* 0..59 */
-    bcd = buffer[1] & 0b01111111;
+    bcd = data[1] & 0b01111111;
     time->tm_min = bcd2decimal(bcd);
 
     /* 0..23 */
-    bcd = buffer[2] & 0b00111111;
+    bcd = data[2] & 0b00111111;
     time->tm_hour = bcd2decimal(bcd);
 
     /* 1..31 */
-    bcd = buffer[3] & 0b00111111;
+    bcd = data[3] & 0b00111111;
     time->tm_mday = bcd2decimal(bcd);
 
     /* 0..6 */
-    bcd = buffer[4] & 0b00000111;
+    bcd = data[4] & 0b00000111;
     time->tm_wday = bcd2decimal(bcd);
 
     /* 0..11 */
-    bcd = buffer[5] & 0b00011111;
+    bcd = data[5] & 0b00011111;
     time->tm_mon = bcd2decimal(bcd) - 1;
 
     /* If century bit set assume it is 2000. Note that it seems */
     /* that unlike PCF8563, the BM8563 does NOT automatically */
     /* toggle the century bit when year overflows from 99 to 00. */
-    century = (buffer[5] & BM8563_CENTURY_BIT) ? 100 : 0;
+    century = (data[5] & BM8563_CENTURY_BIT) ? 100 : 0;
 
     /* Number of years since 1900 */
-    bcd = buffer[6] & 0b11111111;
+    bcd = data[6] & 0b11111111;
     time->tm_year = bcd2decimal(bcd) + century;
 
     /* Calculate tm_yday. */
     mktime(time);
 
     /* low voltage warning */
-    if (buffer[0] & 0b10000000) {
+    if (data[0] & 0b10000000) {
         return BM8563_ERR_LOW_VOLTAGE;
     }
 
@@ -120,138 +120,133 @@ bm8563_err_t bm8563_read(const bm8563_t *bm, struct tm *time)
 bm8563_err_t bm8563_write(const bm8563_t *bm, const struct tm *time)
 {
     uint8_t bcd;
-    uint8_t buffer[BM8563_TIME_SIZE] = {0};
+    uint8_t data[BM8563_TIME_SIZE] = {0};
 
     /* 0..59 */
     bcd = decimal2bcd(time->tm_sec);
-    buffer[0] = bcd & 0b01111111;
+    data[0] = bcd & 0b01111111;
 
     /* 0..59 */
     bcd = decimal2bcd(time->tm_min);
-    buffer[1] = bcd & 0b01111111;
+    data[1] = bcd & 0b01111111;
 
     /* 0..23 */
     bcd = decimal2bcd(time->tm_hour);
-    buffer[2] = bcd & 0b00111111;
+    data[2] = bcd & 0b00111111;
 
     /* 1..31 */
     bcd = decimal2bcd(time->tm_mday);
-    buffer[3] = bcd & 0b00111111;
+    data[3] = bcd & 0b00111111;
 
     /* 0..6 */
     bcd = decimal2bcd(time->tm_wday);
-    buffer[4] = bcd & 0b00000111;
+    data[4] = bcd & 0b00000111;
 
     /* 1..12 */
     bcd = decimal2bcd(time->tm_mon + 1);
-    buffer[5] = bcd & 0b00011111;
+    data[5] = bcd & 0b00011111;
 
     /* If 2000 set the century bit. */
     if (time->tm_year >= 100) {
-        buffer[5] |= BM8563_CENTURY_BIT;
+        data[5] |= BM8563_CENTURY_BIT;
     }
 
     /* 0..99 */
     bcd = decimal2bcd(time->tm_year % 100);
-    buffer[6] = bcd & 0b11111111;
+    data[6] = bcd & 0b11111111;
 
-    return bm->write(bm->handle, BM8563_ADDRESS, BM8563_SECONDS, buffer, BM8563_TIME_SIZE);
+    return bm->write(bm->handle, BM8563_ADDRESS, BM8563_SECONDS, data, BM8563_TIME_SIZE);
 }
 
-
-bm8563_err_t bm8563_ioctl(const bm8563_t *bm, int16_t command, void *argument)
+bm8563_err_t bm8563_ioctl(const bm8563_t *bm, int16_t command, void *buffer)
 {
     uint8_t reg = command >> 8;
-    uint8_t buffer[BM8563_ALARM_SIZE] = {0};
+    uint8_t data[BM8563_ALARM_SIZE] = {0};
     uint8_t status;
     struct tm *time;
 
     switch (command) {
     case BM8563_ALARM_SET:
-        time = (struct tm *)argument;
+        time = (struct tm *)buffer;
 
         /* 0..59 */
         if (BM8563_ALARM_NONE == time->tm_min) {
-            buffer[0] = BM8563_ALARM_DISABLE;
+            data[0] = BM8563_ALARM_DISABLE;
         } else {
-            buffer[0] = decimal2bcd(time->tm_min);
-            buffer[0] |= BM8563_ALARM_ENABLE;
+            data[0] = decimal2bcd(time->tm_min);
         }
 
         /* 0..23 */
         if (BM8563_ALARM_NONE == time->tm_hour) {
-            buffer[1] = BM8563_ALARM_DISABLE;
+            data[1] = BM8563_ALARM_DISABLE;
         } else {
-            buffer[1] = decimal2bcd(time->tm_hour);
-            buffer[1] &= 0b00111111;
-            buffer[1] |= BM8563_ALARM_ENABLE;
+            data[1] = decimal2bcd(time->tm_hour);
+            data[1] &= 0b00111111;
         }
 
         /* 1..31 */
         if (BM8563_ALARM_NONE == time->tm_mday) {
-            buffer[2] = BM8563_ALARM_DISABLE;
+            data[2] = BM8563_ALARM_DISABLE;
         } else {
-            buffer[2] = decimal2bcd(time->tm_mday);
-            buffer[2] &= 0b00111111;
-            buffer[2] |= BM8563_ALARM_ENABLE;
+            data[2] = decimal2bcd(time->tm_mday);
+            data[2] &= 0b00111111;
         }
 
         /* 0..6 */
         if (BM8563_ALARM_NONE == time->tm_mday) {
-            buffer[3] = BM8563_ALARM_DISABLE;
+            data[3] = BM8563_ALARM_DISABLE;
         } else {
-            buffer[3] = decimal2bcd(time->tm_wday);
-            buffer[3] &= 0b00000111;
-            buffer[3] |= BM8563_ALARM_ENABLE;
+            data[3] = decimal2bcd(time->tm_wday);
+            data[3] &= 0b00000111;
         }
 
         return bm->write(
-            bm->handle, BM8563_ADDRESS, reg, buffer, BM8563_ALARM_SIZE
+            bm->handle, BM8563_ADDRESS, reg, data, BM8563_ALARM_SIZE
         );
 
         break;
 
     case BM8563_ALARM_READ:
-        time = (struct tm *)argument;
+        time = (struct tm *)buffer;
 
         /* 0..59 */
         status = bm->read(
-            bm->handle, BM8563_ADDRESS, reg, buffer, BM8563_ALARM_SIZE
+            bm->handle, BM8563_ADDRESS, reg, data, BM8563_ALARM_SIZE
         );
 
         if (BM8563_OK != status) {
             return status;
         }
 
-        if (BM8563_ALARM_DISABLE & buffer[0]) {
+        if (BM8563_ALARM_DISABLE & data[0]) {
             time->tm_min = BM8563_ALARM_NONE;
         } else {
-            buffer[0] &= 0b01111111;
-            time->tm_min = bcd2decimal(buffer[0]);
+            data[0] &= 0b01111111;
+            time->tm_min = bcd2decimal(data[0]);
         }
 
         /* 0..23 */
-        if (BM8563_ALARM_DISABLE & buffer[1]) {
+        if (BM8563_ALARM_DISABLE & data[1]) {
             time->tm_hour = BM8563_ALARM_NONE;
         } else {
-            buffer[1] &= 0b00111111;
-            time->tm_hour = bcd2decimal(buffer[1]);
+            data[1] &= 0b00111111;
+            time->tm_hour = bcd2decimal(data[1]);
         }
 
         /* 1..31 */
-        if (BM8563_ALARM_DISABLE & buffer[2]) {
+        if (BM8563_ALARM_DISABLE & data[2]) {
             time->tm_mday = BM8563_ALARM_NONE;
         } else {
-            buffer[2] &= 0b00111111;
-            time->tm_mday = bcd2decimal(buffer[2]);
+            data[2] &= 0b00111111;
+            time->tm_mday = bcd2decimal(data[2]);
         }
 
         /* 0..6 */
-        if (BM8563_ALARM_DISABLE & buffer[3]) {
+        if (BM8563_ALARM_DISABLE & data[3]) {
             time->tm_wday = BM8563_ALARM_NONE;
         } else {
-            buffer[3] &= 0b00000111;
-            time->tm_wday = bcd2decimal(buffer[3]);
+            data[3] &= 0b00000111;
+            time->tm_wday = bcd2decimal(data[3]);
         }
 
         return BM8563_OK;
@@ -260,14 +255,14 @@ bm8563_err_t bm8563_ioctl(const bm8563_t *bm, int16_t command, void *argument)
     case BM8563_CONTROL_STATUS1_READ:
     case BM8563_CONTROL_STATUS2_READ:
         return bm->read(
-            bm->handle, BM8563_ADDRESS, reg, (uint8_t *)argument, 1
+            bm->handle, BM8563_ADDRESS, reg, (uint8_t *)buffer, 1
         );
         break;
 
     case BM8563_CONTROL_STATUS1_WRITE:
     case BM8563_CONTROL_STATUS2_WRITE:
         return bm->write(
-            bm->handle, BM8563_ADDRESS, reg, (uint8_t *)argument, 1
+            bm->handle, BM8563_ADDRESS, reg, (uint8_t *)buffer, 1
         );
         break;
 
