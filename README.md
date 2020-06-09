@@ -126,6 +126,44 @@ bm8563_init(&bm);
 bm8563_ioctl(&bm, BM8563_ALARM_READ, &rtc_alarm);
 ```
 
+## Set RTC timer
+
+```c
+#include "bm8563.h"
+#include "user_i2c.h"
+
+uint8_t count, control;
+bm8563_t bm;
+
+/* Add pointers to user provided functions. */
+bm.read = &user_i2c_read;
+bm.write = &user_i2c_write;
+
+bm8563_init(&bm);
+
+/* Create a 10 second timer. */
+count = 10;
+control = BM8563_TIMER_ENABLE | BM8563_TIMER_1HZ;
+
+bm8563_ioctl(&bm, BM8563_TIMER_WRITE, &count);
+bm8563_ioctl(&bm, BM8563_TIMER_CONTROL_WRITE, &control);
+
+/* Prints "Timer!" every 10 seconds. */
+while (1) {
+    bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_READ, &control);
+    /* Check for timer flag. */
+    if (control & BM8563_TF) {
+        printf("Timer!\n");
+
+        /* Clear timer flag. */
+        tmp &= ~BM8563_TF;
+        bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_WRITE, &tmp);
+    }
+}
+
+```
+
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.txt) for more information.

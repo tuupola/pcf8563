@@ -254,6 +254,8 @@ bm8563_err_t bm8563_ioctl(const bm8563_t *bm, int16_t command, void *buffer)
 
     case BM8563_CONTROL_STATUS1_READ:
     case BM8563_CONTROL_STATUS2_READ:
+    case BM8563_TIMER_CONTROL_READ:
+    case BM8563_TIMER_READ:
         return bm->read(
             bm->handle, BM8563_ADDRESS, reg, (uint8_t *)buffer, 1
         );
@@ -261,6 +263,8 @@ bm8563_err_t bm8563_ioctl(const bm8563_t *bm, int16_t command, void *buffer)
 
     case BM8563_CONTROL_STATUS1_WRITE:
     case BM8563_CONTROL_STATUS2_WRITE:
+    case BM8563_TIMER_CONTROL_WRITE:
+    case BM8563_TIMER_WRITE:
         return bm->write(
             bm->handle, BM8563_ADDRESS, reg, (uint8_t *)buffer, 1
         );

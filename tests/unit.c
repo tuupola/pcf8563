@@ -155,6 +155,29 @@ TEST should_read_and_write_alarm(void) {
     PASS();
 }
 
+TEST should_read_and_write_timer(void) {
+    uint8_t count = 10;
+    uint8_t reg =  BM8563_TIMER_ENABLE | BM8563_TIMER_1HZ;
+
+    bm8563_t bm;
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    ASSERT(BM8563_OK == bm8563_init(&bm));
+    ASSERT(BM8563_OK == bm8563_ioctl(&bm, BM8563_TIMER_WRITE, &count));
+    ASSERT(BM8563_OK == bm8563_ioctl(&bm, BM8563_TIMER_CONTROL_WRITE, &reg));
+
+    count = 0;
+    reg = 0;
+
+    ASSERT(BM8563_OK == bm8563_ioctl(&bm, BM8563_TIMER_READ, &count));
+    ASSERT(BM8563_OK == bm8563_ioctl(&bm, BM8563_TIMER_CONTROL_READ, &reg));
+    ASSERT(10 == count);
+    ASSERT((BM8563_TIMER_ENABLE | BM8563_TIMER_1HZ) == reg);
+
+    PASS();
+}
+
 GREATEST_MAIN_DEFS();
 
 int main(int argc, char **argv) {
@@ -168,6 +191,7 @@ int main(int argc, char **argv) {
     RUN_TEST(should_read_and_write_time);
     RUN_TEST(should_handle_century);
     RUN_TEST(should_read_and_write_alarm);
+    RUN_TEST(should_read_and_write_timer);
 
     GREATEST_MAIN_END();
 }

@@ -70,6 +70,14 @@ extern "C" {
 #define BM8563_ALARM_NONE       (0xff)
 #define BM8563_ALARM_SIZE       (0x04)
 
+#define BM8563_TIMER_CONTROL    (0x0e)
+#define BM8563_TIMER_ENABLE     (0b10000000)
+#define BM8563_TIMER_4_096KHZ   (0b00000000)
+#define BM8563_TIMER_64HZ       (0b00000001)
+#define BM8563_TIMER_1HZ        (0b00000010)
+#define BM8563_TIMER_1_60HZ     (0b00000011)
+#define BM8563_TIMER            (0x0f)
+
 /* IOCTL commands */
 #define BM8563_ALARM_SET        (0x0900)
 #define BM8563_ALARM_READ       (0x0901)
@@ -77,6 +85,10 @@ extern "C" {
 #define BM8563_CONTROL_STATUS1_WRITE    (0x0001)
 #define BM8563_CONTROL_STATUS2_READ     (0x0100)
 #define BM8563_CONTROL_STATUS2_WRITE    (0x0101)
+#define BM8563_TIMER_CONTROL_READ       (0x0e00)
+#define BM8563_TIMER_CONTROL_WRITE      (0x0e01)
+#define BM8563_TIMER_READ               (0x0f00)
+#define BM8563_TIMER_WRITE              (0x0f01)
 
 /* Status codes. */
 #define BM8563_ERROR_NOTTY      (-1)
