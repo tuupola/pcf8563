@@ -24,8 +24,8 @@ SOFTWARE.
 
 -cut-
 
-This file is part of hardware agnostic I2C driver for BM8563 RTC:
-https://github.com/tuupola/bm8563
+This file is part of hardware agnostic I2C driver for PCF8563 RTC:
+https://github.com/tuupola/pcf8563
 
 SPDX-License-Identifier: MIT
 
@@ -34,25 +34,25 @@ SPDX-License-Identifier: MIT
 #include <stdint.h>
 #include <string.h>
 
-#include "bm8563.h"
+#include "pcf8563.h"
 #include "mock_i2c.h"
 
 uint8_t memory[255] = {0};
 
 int32_t mock_i2c_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size) {
     memcpy(buffer, memory + reg, size);
-    return BM8563_OK;
+    return PCF8563_OK;
 }
 
 int32_t mock_i2c_write(void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size) {
     memcpy(memory + reg, buffer, size);
-    return BM8563_OK;
+    return PCF8563_OK;
 }
 
 int32_t mock_i2c_low_voltage_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size) {
     memcpy(buffer, memory + reg, size);
     buffer[0] |= 0b10000000;
-    return BM8563_OK;
+    return PCF8563_OK;
 }
 
 int32_t mock_failing_i2c_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size) {
