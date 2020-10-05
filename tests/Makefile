@@ -9,7 +9,7 @@ PROGRAMS = unit
 
 all: ${PROGRAMS}
 
-unit: unit.o mock_i2c.o ../bm8563.o
+unit: unit.o mock_i2c.o ../pcf8563.o
 
 test: unit
 	./unit

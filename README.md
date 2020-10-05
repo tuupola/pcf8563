@@ -1,6 +1,6 @@
-# Platform agnostic I2C driver for BM8563 RTC
+# Platform agnostic I2C driver for PCF8563 RTC
 
-![C/C++ CI](https://github.com/tuupola/bm8563/workflows/C/C++%20CI/badge.svg)
+![C/C++ CI](https://github.com/tuupola/pcf8563/workflows/C/C++%20CI/badge.svg)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 To use this library you must to provide functions for both reading and writing the I2C bus. Function definitions must be the following.
@@ -17,22 +17,22 @@ Where `address` is the I2C address, `reg` is the register to read or write, `buf
 ```c
 #include <time.h>
 
-#include "bm8563.h"
+#include "pcf8563.h"
 #include "user_i2c.h"
 
 struct tm rtc;
 char buffer[128];
-bm8563_t bm;
+pcf8563_t pcf;
 
 /* Add pointers to user provided functions. */
-bm.read = &user_i2c_read;
-bm.write = &user_i2c_write;
+pcf.read = &user_i2c_read;
+pcf.write = &user_i2c_write;
 
 /* You could set the handle here. It can be pointer to anything. */
-bm.handle = NULL;
+pcf.handle = NULL;
 
-bm8563_init(&bm);
-bm8563_read(&bm, &rtc);
+pcf8563_init(&pcf);
+pcf8563_read(&pcf, &rtc);
 
 strftime(buffer, 128 ,"%c (day %j)" , &rtc);
 printf("RTC: %s\n", buffer);
@@ -44,18 +44,18 @@ printf("RTC: %s\n", buffer);
 ```c
 #include <time.h>
 
-#include "bm8563.h"
+#include "pcf8563.h"
 #include "user_i2c.h"
 
 struct tm rtc;
-bm8563_t bm;
+pcf8563_t pcf;
 
 /* Add pointers to user provided functions. */
-bm.read = &user_i2c_read;
-bm.write = &user_i2c_write;
+pcf.read = &user_i2c_read;
+pcf.write = &user_i2c_write;
 
 /* You could set the handle here. It can be pointer to anything. */
-bm.handle = NULL;
+pcf.handle = NULL;
 
 /* 2020-12-31 23:59:45 */
 rtc.tm_year = 2020 - 1900;
@@ -65,8 +65,8 @@ rtc.tm_hour = 23;
 rtc.tm_min = 59;
 rtc.tm_sec = 45;
 
-bm8563_init(&bm);
-bm8563_write(&bm, &rtc);
+pcf8563_init(&pcf);
+pcf8563_write(&pcf, &rtc);
 ```
 
 ## Set RTC alarm
@@ -74,36 +74,36 @@ bm8563_write(&bm, &rtc);
 ```c
 #include <time.h>
 
-#include "bm8563.h"
+#include "pcf8563.h"
 #include "user_i2c.h"
 
 uint8_t tmp;
 struct tm rtc_alarm;
-bm8563_t bm;
+pcf8563_t pcf;
 
 /* Add pointers to user provided functions. */
-bm.read = &user_i2c_read;
-bm.write = &user_i2c_write;
+pcf.read = &user_i2c_read;
+pcf.write = &user_i2c_write;
 
-bm8563_init(&bm);
+pcf8563_init(&pcf);
 
 /* Add alarm every day at 21:30. */
 rtc_alarm.tm_min = 30;
 rtc_alarm.tm_hour = 21;
-rtc_alarm.tm_mday = BM8563_ALARM_NONE;
-rtc_alarm.tm_wday = BM8563_ALARM_NONE;
+rtc_alarm.tm_mday = PCF8563_ALARM_NONE;
+rtc_alarm.tm_wday = PCF8563_ALARM_NONE;
 
-bm8563_ioctl(&bm, BM8563_ALARM_SET, &rtc_alarm);
+pcf8563_ioctl(&pcf, PCF8563_ALARM_SET, &rtc_alarm);
 
 /* Later check if alarm is triggered. */
-bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_READ, &tmp);
-if (tmp & BM8563_AF) {
+pcf8563_ioctl(&pcf, PCF8563_CONTROL_STATUS2_READ, &tmp);
+if (tmp & PCF8563_AF) {
     printf("Got alarm!");
 };
 
 /* And clear the alarm flag. */
-tmp &= ~BM8563_AF;
-bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_WRITE, &tmp);
+tmp &= ~PCF8563_AF;
+pcf8563_ioctl(&pcf, PCF8563_CONTROL_STATUS2_WRITE, &tmp);
 ```
 
 ## Read currently set RTC alarm
@@ -111,53 +111,53 @@ bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_WRITE, &tmp);
 ```c
 #include <time.h>
 
-#include "bm8563.h"
+#include "pcf8563.h"
 #include "user_i2c.h"
 
 struct tm rtc_alarm;
-bm8563_t bm;
+pcf8563_t pcf;
 
 /* Add pointers to user provided functions. */
-bm.read = &user_i2c_read;
-bm.write = &user_i2c_write;
+pcf.read = &user_i2c_read;
+pcf.write = &user_i2c_write;
 
-bm8563_init(&bm);
+pcf8563_init(&pcf);
 
-bm8563_ioctl(&bm, BM8563_ALARM_READ, &rtc_alarm);
+pcf8563_ioctl(&pcf, PCF8563_ALARM_READ, &rtc_alarm);
 ```
 
 ## Set RTC timer
 
 ```c
-#include "bm8563.h"
+#include "pcf8563.h"
 #include "user_i2c.h"
 
 uint8_t count, control;
-bm8563_t bm;
+pcf8563_t pcf;
 
 /* Add pointers to user provided functions. */
-bm.read = &user_i2c_read;
-bm.write = &user_i2c_write;
+pcf.read = &user_i2c_read;
+pcf.write = &user_i2c_write;
 
-bm8563_init(&bm);
+pcf8563_init(&pcf);
 
 /* Create a 10 second timer. */
 count = 10;
-control = BM8563_TIMER_ENABLE | BM8563_TIMER_1HZ;
+control = PCF8563_TIMER_ENABLE | PCF8563_TIMER_1HZ;
 
-bm8563_ioctl(&bm, BM8563_TIMER_WRITE, &count);
-bm8563_ioctl(&bm, BM8563_TIMER_CONTROL_WRITE, &control);
+pcf8563_ioctl(&pcf, PCF8563_TIMER_WRITE, &count);
+pcf8563_ioctl(&pcf, PCF8563_TIMER_CONTROL_WRITE, &control);
 
 /* Prints "Timer!" every 10 seconds. */
 while (1) {
-    bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_READ, &control);
+    pcf8563_ioctl(&pcf, PCF8563_CONTROL_STATUS2_READ, &control);
     /* Check for timer flag. */
-    if (control & BM8563_TF) {
+    if (control & PCF8563_TF) {
         printf("Timer!\n");
 
         /* Clear timer flag. */
-        tmp &= ~BM8563_TF;
-        bm8563_ioctl(&bm, BM8563_CONTROL_STATUS2_WRITE, &tmp);
+        tmp &= ~PCF8563_TF;
+        pcf8563_ioctl(&pcf, PCF8563_CONTROL_STATUS2_WRITE, &tmp);
     }
 }
 
