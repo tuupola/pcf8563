@@ -97,12 +97,10 @@ pcf8563_err_t pcf8563_read(const pcf8563_t *pcf, struct tm *time)
     bcd = data[5] & 0b00011111;
     time->tm_mon = bcd2decimal(bcd) - 1;
 
-    /* If century bit set assume it is 2000. Note that it seems */
-    /* that unlike PCF8563, the PCF8563 does NOT automatically */
-    /* toggle the century bit when year overflows from 99 to 00. */
+    /* If century bit set assume it is 2000. */
     century = (data[5] & PCF8563_CENTURY_BIT) ? 100 : 0;
 
-    /* Number of years since 1900 */
+    /* Number of years since 1900. */
     bcd = data[6] & 0b11111111;
     time->tm_year = bcd2decimal(bcd) + century;
 
