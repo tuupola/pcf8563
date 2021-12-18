@@ -101,6 +101,12 @@ TEST should_read_and_write_time(void) {
     ASSERT(PCF8563_OK == pcf8563_write(&bm, &datetime));
     ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
 
+    ASSERT_EQ(datetime.tm_sec, datetime2.tm_sec);
+    ASSERT_EQ(datetime.tm_min, datetime2.tm_min);
+    ASSERT_EQ(datetime.tm_hour, datetime2.tm_hour);
+    ASSERT_EQ(datetime.tm_mon, datetime2.tm_mon);
+    ASSERT_EQ(datetime.tm_year, datetime2.tm_year);
+
     PASS();
 }
 
