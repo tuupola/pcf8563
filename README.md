@@ -1,7 +1,7 @@
 # Platform agnostic I2C driver for PCF8563 RTC
 
 ![C/C++ CI](https://github.com/tuupola/pcf8563/workflows/C/C++%20CI/badge.svg)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 To use this library you must to provide functions for both reading and writing the I2C bus. Function definitions must be the following.
 
