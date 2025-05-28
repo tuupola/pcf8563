@@ -55,9 +55,11 @@ pcf8563_init(const pcf8563_t *pcf)
     int32_t status;
 
     status = pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS1, &clear, 1);
+
     if (PCF8563_OK != status) {
         return status;
     }
+
     return pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS2, &clear, 1);
 }
 
@@ -69,9 +71,7 @@ pcf8563_read(const pcf8563_t *pcf, struct tm *time)
     uint16_t century;
     int32_t status;
 
-    status = pcf->read(
-            pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE
-        );
+    status = pcf->read(pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE);
 
     if (PCF8563_OK != status) {
         return status;
