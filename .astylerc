@@ -16,4 +16,5 @@
 --lineend=linux
 --suffix=none
 
+--exclude=greatest.h
 --ignore-exclude-errors

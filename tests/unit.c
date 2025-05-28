@@ -35,11 +35,15 @@ SPDX-License-Identifier: MIT
 #include "pcf8563.h"
 #include "mock_i2c.h"
 
-TEST should_pass(void) {
+TEST
+should_pass(void)
+{
     PASS();
 }
 
-TEST should_fail_init(void) {
+TEST
+should_fail_init(void)
+{
     pcf8563_t bm;
     uint32_t status;
     bm.read = &mock_failing_i2c_read;
@@ -49,7 +53,9 @@ TEST should_fail_init(void) {
     PASS();
 }
 
-TEST should_init(void) {
+TEST
+should_init(void)
+{
     pcf8563_t bm;
     bm.read = &mock_i2c_read;
     bm.write = &mock_i2c_write;
@@ -58,7 +64,9 @@ TEST should_init(void) {
     PASS();
 }
 
-TEST should_fail_read_time(void) {
+TEST
+should_fail_read_time(void)
+{
     struct tm datetime = {0};
     pcf8563_t bm;
     bm.read = &mock_failing_i2c_read;
@@ -69,7 +77,9 @@ TEST should_fail_read_time(void) {
     PASS();
 }
 
-TEST should_get_low_voltage_warning(void) {
+TEST
+should_get_low_voltage_warning(void)
+{
     struct tm datetime = {0};
     pcf8563_t bm;
     bm.read = &mock_i2c_low_voltage_read;
@@ -80,7 +90,9 @@ TEST should_get_low_voltage_warning(void) {
     PASS();
 }
 
-TEST should_read_and_write_time(void) {
+TEST
+should_read_and_write_time(void)
+{
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     char buffer[128];
@@ -110,7 +122,9 @@ TEST should_read_and_write_time(void) {
     PASS();
 }
 
-TEST should_handle_century(void) {
+TEST
+should_handle_century(void)
+{
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     char buffer[128];
@@ -132,12 +146,14 @@ TEST should_handle_century(void) {
 
     ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
 
-    strftime(buffer, 128 ,"%c (day %j)" , &datetime2);
+    strftime(buffer, 128, "%c (day %j)", &datetime2);
     ASSERT_STR_EQ("Sun Dec 24 23:15:20 2006 (day 358)", &buffer);
     PASS();
 }
 
-TEST should_read_and_write_alarm(void) {
+TEST
+should_read_and_write_alarm(void)
+{
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     char buffer[128];
@@ -161,7 +177,9 @@ TEST should_read_and_write_alarm(void) {
     PASS();
 }
 
-TEST should_read_and_write_timer(void) {
+TEST
+should_read_and_write_timer(void)
+{
     uint8_t count = 10;
     uint8_t reg =  PCF8563_TIMER_ENABLE | PCF8563_TIMER_1HZ;
 
@@ -186,7 +204,9 @@ TEST should_read_and_write_timer(void) {
 
 GREATEST_MAIN_DEFS();
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
     GREATEST_MAIN_BEGIN();
 
     RUN_TEST(should_pass);
