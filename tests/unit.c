@@ -230,13 +230,37 @@ should_read_and_write_alarm(void)
 {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
-    char buffer[128];
     pcf8563_t bm;
     bm.read = &mock_i2c_read;
     bm.write = &mock_i2c_write;
 
     datetime.tm_min = 30;
     datetime.tm_hour = 21;
+    datetime.tm_mday = 15;
+    datetime.tm_wday = 3;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT(PCF8563_OK == pcf8563_ioctl(&bm, PCF8563_ALARM_SET, &datetime));
+    ASSERT(PCF8563_OK == pcf8563_ioctl(&bm, PCF8563_ALARM_READ, &datetime2));
+    ASSERT_EQ(datetime.tm_min, datetime2.tm_min);
+    ASSERT_EQ(datetime.tm_hour, datetime2.tm_hour);
+    ASSERT_EQ(datetime.tm_mday, datetime2.tm_mday);
+    ASSERT_EQ(datetime.tm_wday, datetime2.tm_wday);
+
+    PASS();
+}
+
+TEST
+should_read_and_write_alarm_all_none(void)
+{
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
+    pcf8563_t bm;
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    datetime.tm_min = PCF8563_ALARM_NONE;
+    datetime.tm_hour = PCF8563_ALARM_NONE;
     datetime.tm_mday = PCF8563_ALARM_NONE;
     datetime.tm_wday = PCF8563_ALARM_NONE;
 
@@ -308,6 +332,7 @@ main(int argc, char **argv)
     RUN_TEST(should_handle_year_2000);
     RUN_TEST(should_handle_year_2099);
     RUN_TEST(should_read_and_write_alarm);
+    RUN_TEST(should_read_and_write_alarm_all_none);
     RUN_TEST(should_read_and_write_timer);
     RUN_TEST(should_return_error_for_invalid_ioctl);
 
