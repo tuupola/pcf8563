@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## [0.6.0](https://github.com/tuupola/pcf8563/compare/0.5.0...master) - unreleased
+
+### Fixed
+- Cmake when not using ESP-IDF ([#6](https://github.com/tuupola/pcf8563/pull/6))
+
 ## [0.5.0](https://github.com/tuupola/pcf8563/compare/0.4.0...0.5.0) - 2025-12-08
 
 ### Fixed
