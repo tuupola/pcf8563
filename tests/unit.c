@@ -123,35 +123,6 @@ should_read_and_write_time(void)
 }
 
 TEST
-should_handle_century(void)
-{
-    struct tm datetime = {0};
-    struct tm datetime2 = {0};
-    char buffer[128];
-    pcf8563_t bm;
-    bm.read = &mock_i2c_read;
-    bm.write = &mock_i2c_write;
-
-    datetime.tm_sec = 20;
-    datetime.tm_min = 15;
-    datetime.tm_hour = 23;
-    datetime.tm_mday = 24;
-    /* Months since January. */
-    datetime.tm_mon = 12 - 1;
-    /* Years since 1900. */
-    datetime.tm_year = 2006 - 1900;
-
-    ASSERT(PCF8563_OK == pcf8563_init(&bm));
-    ASSERT(PCF8563_OK == pcf8563_write(&bm, &datetime));
-
-    ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
-
-    strftime(buffer, 128, "%c (day %j)", &datetime2);
-    ASSERT_STR_EQ("Sun Dec 24 23:15:20 2006 (day 358)", &buffer);
-    PASS();
-}
-
-TEST
 should_handle_year_1900(void)
 {
     struct tm datetime = {0};
@@ -164,6 +135,7 @@ should_handle_year_1900(void)
     datetime.tm_min = 0;
     datetime.tm_hour = 0;
     datetime.tm_mday = 1;
+    /* Months since January. */
     datetime.tm_mon = 0;
     /* Years since 1900, no century bit. */
     datetime.tm_year = 1900 - 1900;
@@ -189,6 +161,7 @@ should_handle_year_1999(void)
     datetime.tm_min = 59;
     datetime.tm_hour = 23;
     datetime.tm_mday = 31;
+    /* Months since January. */
     datetime.tm_mon = 11;
     /* Years since 1900, no century bit. */
     datetime.tm_year = 1999 - 1900;
@@ -214,6 +187,7 @@ should_handle_year_2000(void)
     datetime.tm_min = 0;
     datetime.tm_hour = 0;
     datetime.tm_mday = 1;
+    /* Months since January. */
     datetime.tm_mon = 0;
     /* Years since 1900, century bit should be set. */
     datetime.tm_year = 2000 - 1900;
@@ -329,7 +303,6 @@ main(int argc, char **argv)
     RUN_TEST(should_fail_read_time);
     RUN_TEST(should_get_low_voltage_warning);
     RUN_TEST(should_read_and_write_time);
-    RUN_TEST(should_handle_century);
     RUN_TEST(should_handle_year_1900);
     RUN_TEST(should_handle_year_1999);
     RUN_TEST(should_handle_year_2000);
