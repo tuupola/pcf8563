@@ -13,9 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: configure
+    - name: Configure
       run: cmake -B build -DPCF8563_BUILD_TESTS=ON
-    - name: build
+    - name: Build
       run: cmake --build build
-    - name: test
+    - name: Test
       run: ctest --test-dir build --output-on-failure
