@@ -163,6 +163,14 @@ while (1) {
 
 ```
 
+## Run unit tests
+
+```
+$ mkdir build && cd build
+$ cmake -DPCF8563_BUILD_TESTS=ON ..
+$ make
+$ ctest
+```
 
 ## License
 
