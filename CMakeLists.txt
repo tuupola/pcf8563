@@ -13,4 +13,11 @@ else()
     add_library(pcf8563 pcf8563.c)
     target_include_directories(pcf8563 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+    # Tests (off by default)
+    option(PCF8563_BUILD_TESTS "Build tests" OFF)
+    if (PCF8563_BUILD_TESTS)
+        enable_testing()
+        add_subdirectory(tests)
+    endif()
+
 endif()
