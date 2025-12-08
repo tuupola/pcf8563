@@ -341,6 +341,34 @@ should_close(void)
     PASS();
 }
 
+TEST
+bug_4_should_set_alarm_weekday(void)
+{
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
+    pcf8563_t bm;
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    /* Set weekday alarm enabled but mday alarm disabled. */
+    /* This tests that weekday uses tm_wday, not tm_mday. */
+    datetime.tm_min = PCF8563_ALARM_NONE;
+    datetime.tm_hour = PCF8563_ALARM_NONE;
+    datetime.tm_mday = PCF8563_ALARM_NONE;
+    datetime.tm_wday = 3;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT(PCF8563_OK == pcf8563_ioctl(&bm, PCF8563_ALARM_SET, &datetime));
+    ASSERT(PCF8563_OK == pcf8563_ioctl(&bm, PCF8563_ALARM_READ, &datetime2));
+
+    /* Weekday should be 3, not disabled. */
+    ASSERT_EQ(datetime.tm_wday, datetime2.tm_wday);
+    /* mday should be disabled (ALARM_NONE). */
+    ASSERT_EQ(PCF8563_ALARM_NONE, datetime2.tm_mday);
+
+    PASS();
+}
+
 GREATEST_MAIN_DEFS();
 
 int
@@ -364,6 +392,8 @@ main(int argc, char **argv)
     RUN_TEST(should_return_error_for_invalid_ioctl);
     RUN_TEST(should_fail_alarm_read);
     RUN_TEST(should_close);
+
+    RUN_TEST(bug_4_should_set_alarm_weekday);
 
     GREATEST_MAIN_END();
 }
