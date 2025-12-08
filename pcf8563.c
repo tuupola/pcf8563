@@ -197,7 +197,7 @@ pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer)
             }
 
             /* 0..6 */
-            if (PCF8563_ALARM_NONE == time->tm_mday) {
+            if (PCF8563_ALARM_NONE == time->tm_wday) {
                 data[3] = PCF8563_ALARM_DISABLE;
             } else {
                 data[3] = decimal2bcd(time->tm_wday);
