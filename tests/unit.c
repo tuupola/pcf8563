@@ -152,6 +152,106 @@ should_handle_century(void)
 }
 
 TEST
+should_handle_year_1900(void)
+{
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
+    pcf8563_t bm;
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    datetime.tm_sec = 0;
+    datetime.tm_min = 0;
+    datetime.tm_hour = 0;
+    datetime.tm_mday = 1;
+    datetime.tm_mon = 0;
+    /* Years since 1900, no century bit. */
+    datetime.tm_year = 1900 - 1900;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT(PCF8563_OK == pcf8563_write(&bm, &datetime));
+    ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
+
+    ASSERT_EQ(datetime.tm_year, datetime2.tm_year);
+    PASS();
+}
+
+TEST
+should_handle_year_1999(void)
+{
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
+    pcf8563_t bm;
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    datetime.tm_sec = 59;
+    datetime.tm_min = 59;
+    datetime.tm_hour = 23;
+    datetime.tm_mday = 31;
+    datetime.tm_mon = 11;
+    /* Years since 1900, no century bit. */
+    datetime.tm_year = 1999 - 1900;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT(PCF8563_OK == pcf8563_write(&bm, &datetime));
+    ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
+
+    ASSERT_EQ(datetime.tm_year, datetime2.tm_year);
+    PASS();
+}
+
+TEST
+should_handle_year_2000(void)
+{
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
+    pcf8563_t bm;
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    datetime.tm_sec = 0;
+    datetime.tm_min = 0;
+    datetime.tm_hour = 0;
+    datetime.tm_mday = 1;
+    datetime.tm_mon = 0;
+    /* Years since 1900, century bit should be set. */
+    datetime.tm_year = 2000 - 1900;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT(PCF8563_OK == pcf8563_write(&bm, &datetime));
+    ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
+
+    ASSERT_EQ(datetime.tm_year, datetime2.tm_year);
+    PASS();
+}
+
+TEST
+should_handle_year_2099(void)
+{
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
+    pcf8563_t bm;
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    datetime.tm_sec = 59;
+    datetime.tm_min = 59;
+    datetime.tm_hour = 23;
+    datetime.tm_mday = 31;
+    datetime.tm_mon = 11;
+    /* Years since 1900, century bit should be set. */
+    datetime.tm_year = 2099 - 1900;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT(PCF8563_OK == pcf8563_write(&bm, &datetime));
+    ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
+
+    ASSERT_EQ(datetime.tm_year, datetime2.tm_year);
+    PASS();
+}
+
+TEST
 should_read_and_write_alarm(void)
 {
     struct tm datetime = {0};
@@ -216,6 +316,10 @@ main(int argc, char **argv)
     RUN_TEST(should_get_low_voltage_warning);
     RUN_TEST(should_read_and_write_time);
     RUN_TEST(should_handle_century);
+    RUN_TEST(should_handle_year_1900);
+    RUN_TEST(should_handle_year_1999);
+    RUN_TEST(should_handle_year_2000);
+    RUN_TEST(should_handle_year_2099);
     RUN_TEST(should_read_and_write_alarm);
     RUN_TEST(should_read_and_write_timer);
 
