@@ -314,6 +314,20 @@ should_return_error_for_invalid_ioctl(void)
     PASS();
 }
 
+TEST
+should_fail_alarm_read(void)
+{
+    struct tm datetime = {0};
+    pcf8563_t bm;
+    bm.read = &mock_failing_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT_FALSE(PCF8563_OK == pcf8563_ioctl(&bm, PCF8563_ALARM_READ, &datetime));
+
+    PASS();
+}
+
 GREATEST_MAIN_DEFS();
 
 int
@@ -335,6 +349,7 @@ main(int argc, char **argv)
     RUN_TEST(should_read_and_write_alarm_all_none);
     RUN_TEST(should_read_and_write_timer);
     RUN_TEST(should_return_error_for_invalid_ioctl);
+    RUN_TEST(should_fail_alarm_read);
 
     GREATEST_MAIN_END();
 }
