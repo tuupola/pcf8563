@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## [0.5.0](https://github.com/tuupola/pcf8563/compare/0.4.0...master) - unreleased
+## [0.5.0](https://github.com/tuupola/pcf8563/compare/0.4.0...master) - 2025-12-08
 
 ### Fixed
 - PCF8563_ALARM_SET confused mday and wday ([#5](https://github.com/tuupola/pcf8563/pull/5))
