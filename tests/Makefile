@@ -1,5 +1,6 @@
 #CFLAGS += -Wall -Wextra -pedantic -Werror
 #CFLAGS += -Wall -Wextra -pedantic
+CFLAGS += -Wall -Wextra
 CFLAGS += -Wmissing-declarations -g
 CFLAGS += -Wmissing-prototypes
 CFLAGS += -Wstrict-prototypes
