@@ -45,7 +45,6 @@ TEST
 should_fail_init(void)
 {
     pcf8563_t bm;
-    uint32_t status;
     bm.read = &mock_failing_i2c_read;
     bm.write = &mock_failing_i2c_write;
 
@@ -95,7 +94,7 @@ should_read_and_write_time(void)
 {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
-    char buffer[128];
+
     pcf8563_t bm;
     bm.read = &mock_i2c_read;
     bm.write = &mock_i2c_write;

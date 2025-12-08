@@ -1,6 +1,9 @@
 add_executable(unit unit.c mock_i2c.c)
 target_link_libraries(unit PRIVATE pcf8563)
 target_compile_options(unit PRIVATE
+    -Wall
+    -Wextra
+    -Werror
     -Wmissing-declarations
     -Wmissing-prototypes
     -Wstrict-prototypes

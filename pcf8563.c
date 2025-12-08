@@ -282,5 +282,6 @@ pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer)
 pcf8563_err_t
 pcf8563_close(const pcf8563_t *pcf)
 {
+    (void) pcf;
     return PCF8563_OK;
 }
