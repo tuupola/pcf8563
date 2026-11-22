@@ -34,57 +34,57 @@ SPDX-License-Identifier: MIT
 #include <stdint.h>
 #include <string.h>
 
-#include "pcf8563.h"
 #include "mock_i2c.h"
+#include "pcf8563.h"
 
 uint8_t memory[255] = {0};
 
-int32_t
-mock_i2c_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size)
-{
-    (void) handle;
-    (void) address;
+int32_t mock_i2c_read(
+    void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
+) {
+    (void)handle;
+    (void)address;
     memcpy(buffer, memory + reg, size);
     return PCF8563_OK;
 }
 
-int32_t
-mock_i2c_write(void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size)
-{
-    (void) handle;
-    (void) address;
+int32_t mock_i2c_write(
+    void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size
+) {
+    (void)handle;
+    (void)address;
     memcpy(memory + reg, buffer, size);
     return PCF8563_OK;
 }
 
-int32_t
-mock_i2c_low_voltage_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size)
-{
-    (void) handle;
-    (void) address;
+int32_t mock_i2c_low_voltage_read(
+    void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
+) {
+    (void)handle;
+    (void)address;
     memcpy(buffer, memory + reg, size);
     buffer[0] |= 0b10000000;
     return PCF8563_OK;
 }
 
-int32_t
-mock_failing_i2c_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size)
-{
-    (void) handle;
-    (void) address;
-    (void) reg;
-    (void) buffer;
-    (void) size;
+int32_t mock_failing_i2c_read(
+    void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
+) {
+    (void)handle;
+    (void)address;
+    (void)reg;
+    (void)buffer;
+    (void)size;
     return MOCK_I2C_ERROR;
 }
 
-int32_t
-mock_failing_i2c_write(void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size)
-{
-    (void) handle;
-    (void) address;
-    (void) reg;
-    (void) buffer;
-    (void) size;
+int32_t mock_failing_i2c_write(
+    void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size
+) {
+    (void)handle;
+    (void)address;
+    (void)reg;
+    (void)buffer;
+    (void)size;
     return MOCK_I2C_ERROR;
 }

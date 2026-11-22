@@ -32,18 +32,14 @@ SPDX-License-Identifier: MIT
 */
 
 #include "greatest.h"
-#include "pcf8563.h"
 #include "mock_i2c.h"
+#include "pcf8563.h"
 
-TEST
-should_pass(void)
-{
+TEST should_pass(void) {
     PASS();
 }
 
-TEST
-should_fail_init(void)
-{
+TEST should_fail_init(void) {
     pcf8563_t bm;
     bm.read = &mock_failing_i2c_read;
     bm.write = &mock_failing_i2c_write;
@@ -52,9 +48,7 @@ should_fail_init(void)
     PASS();
 }
 
-TEST
-should_init(void)
-{
+TEST should_init(void) {
     pcf8563_t bm;
     bm.read = &mock_i2c_read;
     bm.write = &mock_i2c_write;
@@ -63,9 +57,7 @@ should_init(void)
     PASS();
 }
 
-TEST
-should_fail_read_time(void)
-{
+TEST should_fail_read_time(void) {
     struct tm datetime = {0};
     pcf8563_t bm;
     bm.read = &mock_failing_i2c_read;
@@ -76,9 +68,7 @@ should_fail_read_time(void)
     PASS();
 }
 
-TEST
-should_get_low_voltage_warning(void)
-{
+TEST should_get_low_voltage_warning(void) {
     struct tm datetime = {0};
     pcf8563_t bm;
     bm.read = &mock_i2c_low_voltage_read;
@@ -89,9 +79,7 @@ should_get_low_voltage_warning(void)
     PASS();
 }
 
-TEST
-should_read_and_write_time(void)
-{
+TEST should_read_and_write_time(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
 
@@ -121,9 +109,7 @@ should_read_and_write_time(void)
     PASS();
 }
 
-TEST
-should_handle_year_1900(void)
-{
+TEST should_handle_year_1900(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     pcf8563_t bm;
@@ -147,9 +133,7 @@ should_handle_year_1900(void)
     PASS();
 }
 
-TEST
-should_handle_year_1999(void)
-{
+TEST should_handle_year_1999(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     pcf8563_t bm;
@@ -173,9 +157,7 @@ should_handle_year_1999(void)
     PASS();
 }
 
-TEST
-should_handle_year_2000(void)
-{
+TEST should_handle_year_2000(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     pcf8563_t bm;
@@ -199,9 +181,7 @@ should_handle_year_2000(void)
     PASS();
 }
 
-TEST
-should_handle_year_2099(void)
-{
+TEST should_handle_year_2099(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     pcf8563_t bm;
@@ -224,9 +204,7 @@ should_handle_year_2099(void)
     PASS();
 }
 
-TEST
-should_read_and_write_alarm(void)
-{
+TEST should_read_and_write_alarm(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     pcf8563_t bm;
@@ -249,9 +227,7 @@ should_read_and_write_alarm(void)
     PASS();
 }
 
-TEST
-should_read_and_write_alarm_all_none(void)
-{
+TEST should_read_and_write_alarm_all_none(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     pcf8563_t bm;
@@ -274,11 +250,9 @@ should_read_and_write_alarm_all_none(void)
     PASS();
 }
 
-TEST
-should_read_and_write_timer(void)
-{
+TEST should_read_and_write_timer(void) {
     uint8_t count = 10;
-    uint8_t reg =  PCF8563_TIMER_ENABLE | PCF8563_TIMER_1HZ;
+    uint8_t reg = PCF8563_TIMER_ENABLE | PCF8563_TIMER_1HZ;
 
     pcf8563_t bm;
     bm.read = &mock_i2c_read;
@@ -299,9 +273,7 @@ should_read_and_write_timer(void)
     PASS();
 }
 
-TEST
-should_return_error_for_invalid_ioctl(void)
-{
+TEST should_return_error_for_invalid_ioctl(void) {
     uint8_t dummy;
     pcf8563_t bm;
     bm.read = &mock_i2c_read;
@@ -313,9 +285,7 @@ should_return_error_for_invalid_ioctl(void)
     PASS();
 }
 
-TEST
-should_fail_alarm_read(void)
-{
+TEST should_fail_alarm_read(void) {
     struct tm datetime = {0};
     pcf8563_t bm;
     bm.read = &mock_failing_i2c_read;
@@ -327,9 +297,7 @@ should_fail_alarm_read(void)
     PASS();
 }
 
-TEST
-should_close(void)
-{
+TEST should_close(void) {
     pcf8563_t bm;
     bm.read = &mock_i2c_read;
     bm.write = &mock_i2c_write;
@@ -340,9 +308,7 @@ should_close(void)
     PASS();
 }
 
-TEST
-bug_4_should_set_alarm_weekday(void)
-{
+TEST bug_4_should_set_alarm_weekday(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
     pcf8563_t bm;
@@ -370,9 +336,7 @@ bug_4_should_set_alarm_weekday(void)
 
 GREATEST_MAIN_DEFS();
 
-int
-main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     GREATEST_MAIN_BEGIN();
 
     RUN_TEST(should_pass);

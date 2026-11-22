@@ -36,21 +36,15 @@ SPDX-License-Identifier: MIT
 
 #include "pcf8563.h"
 
-static inline uint8_t
-decimal2bcd (uint8_t decimal)
-{
+static inline uint8_t decimal2bcd(uint8_t decimal) {
     return (((decimal / 10) << 4) | (decimal % 10));
 }
 
-static inline uint8_t
-bcd2decimal(uint8_t bcd)
-{
+static inline uint8_t bcd2decimal(uint8_t bcd) {
     return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
-pcf8563_err_t
-pcf8563_init(const pcf8563_t *pcf)
-{
+pcf8563_err_t pcf8563_init(const pcf8563_t *pcf) {
     uint8_t clear = 0x00;
     int32_t status;
 
@@ -63,15 +57,14 @@ pcf8563_init(const pcf8563_t *pcf)
     return pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS2, &clear, 1);
 }
 
-pcf8563_err_t
-pcf8563_read(const pcf8563_t *pcf, struct tm *time)
-{
+pcf8563_err_t pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
     uint8_t bcd;
     uint8_t data[PCF8563_TIME_SIZE] = {0};
     uint16_t century;
     int32_t status;
 
-    status = pcf->read(pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE);
+    status =
+        pcf->read(pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE);
 
     if (PCF8563_OK != status) {
         return status;
@@ -119,9 +112,7 @@ pcf8563_read(const pcf8563_t *pcf, struct tm *time)
     return PCF8563_OK;
 }
 
-pcf8563_err_t
-pcf8563_write(const pcf8563_t *pcf, const struct tm *time)
-{
+pcf8563_err_t pcf8563_write(const pcf8563_t *pcf, const struct tm *time) {
     uint8_t bcd;
     uint8_t data[PCF8563_TIME_SIZE] = {0};
 
@@ -158,12 +149,12 @@ pcf8563_write(const pcf8563_t *pcf, const struct tm *time)
     bcd = decimal2bcd(time->tm_year % 100);
     data[6] = bcd & 0b11111111;
 
-    return pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE);
+    return pcf->write(
+        pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE
+    );
 }
 
-pcf8563_err_t
-pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer)
-{
+pcf8563_err_t pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer) {
     uint8_t reg = command >> 8;
     uint8_t data[PCF8563_ALARM_SIZE] = {0};
     uint8_t status;
@@ -205,8 +196,8 @@ pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer)
             }
 
             return pcf->write(
-                    pcf->handle, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE
-                );
+                pcf->handle, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE
+            );
 
             break;
 
@@ -214,9 +205,8 @@ pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer)
             time = (struct tm *)buffer;
 
             /* 0..59 */
-            status = pcf->read(
-                    pcf->handle, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE
-                );
+            status =
+                pcf->read(pcf->handle, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE);
 
             if (PCF8563_OK != status) {
                 return status;
@@ -260,28 +250,21 @@ pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer)
         case PCF8563_CONTROL_STATUS2_READ:
         case PCF8563_TIMER_CONTROL_READ:
         case PCF8563_TIMER_READ:
-            return pcf->read(
-                    pcf->handle, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1
-                );
+            return pcf->read(pcf->handle, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1);
             break;
 
         case PCF8563_CONTROL_STATUS1_WRITE:
         case PCF8563_CONTROL_STATUS2_WRITE:
         case PCF8563_TIMER_CONTROL_WRITE:
         case PCF8563_TIMER_WRITE:
-            return pcf->write(
-                    pcf->handle, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1
-                );
+            return pcf->write(pcf->handle, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1);
             break;
-
     }
 
     return PCF8563_ERROR_NOTTY;
 }
 
-pcf8563_err_t
-pcf8563_close(const pcf8563_t *pcf)
-{
-    (void) pcf;
+pcf8563_err_t pcf8563_close(const pcf8563_t *pcf) {
+    (void)pcf;
     return PCF8563_OK;
 }
