@@ -157,7 +157,7 @@ int pcf8563_write(const pcf8563_t *pcf, const struct tm *time) {
 int pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer) {
     uint8_t reg = command >> 8;
     uint8_t data[PCF8563_ALARM_SIZE] = {0};
-    uint8_t status;
+    int status;
     struct tm *time;
 
     switch (command) {
