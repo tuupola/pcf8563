@@ -44,7 +44,7 @@ static inline uint8_t bcd2decimal(uint8_t bcd) {
     return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
-pcf8563_err_t pcf8563_init(const pcf8563_t *pcf) {
+int pcf8563_init(const pcf8563_t *pcf) {
     uint8_t clear = 0x00;
     int32_t status;
 
@@ -57,7 +57,7 @@ pcf8563_err_t pcf8563_init(const pcf8563_t *pcf) {
     return pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS2, &clear, 1);
 }
 
-pcf8563_err_t pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
+int pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
     uint8_t bcd;
     uint8_t data[PCF8563_TIME_SIZE] = {0};
     uint16_t century;
@@ -112,7 +112,7 @@ pcf8563_err_t pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
     return PCF8563_OK;
 }
 
-pcf8563_err_t pcf8563_write(const pcf8563_t *pcf, const struct tm *time) {
+int pcf8563_write(const pcf8563_t *pcf, const struct tm *time) {
     uint8_t bcd;
     uint8_t data[PCF8563_TIME_SIZE] = {0};
 
@@ -154,7 +154,7 @@ pcf8563_err_t pcf8563_write(const pcf8563_t *pcf, const struct tm *time) {
     );
 }
 
-pcf8563_err_t pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer) {
+int pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer) {
     uint8_t reg = command >> 8;
     uint8_t data[PCF8563_ALARM_SIZE] = {0};
     uint8_t status;
@@ -264,7 +264,7 @@ pcf8563_err_t pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer)
     return PCF8563_ERROR_NOTTY;
 }
 
-pcf8563_err_t pcf8563_close(const pcf8563_t *pcf) {
+int pcf8563_close(const pcf8563_t *pcf) {
     (void)pcf;
     return PCF8563_OK;
 }

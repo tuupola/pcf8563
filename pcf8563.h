@@ -106,13 +106,11 @@ typedef struct {
     void *handle;
 } pcf8563_t;
 
-typedef int32_t pcf8563_err_t;
-
-pcf8563_err_t pcf8563_init(const pcf8563_t *pcf);
-pcf8563_err_t pcf8563_read(const pcf8563_t *pcf, struct tm *time);
-pcf8563_err_t pcf8563_write(const pcf8563_t *pcf, const struct tm *time);
-pcf8563_err_t pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer);
-pcf8563_err_t pcf8563_close(const pcf8563_t *pcf);
+int pcf8563_init(const pcf8563_t *pcf);
+int pcf8563_read(const pcf8563_t *pcf, struct tm *time);
+int pcf8563_write(const pcf8563_t *pcf, const struct tm *time);
+int pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer);
+int pcf8563_close(const pcf8563_t *pcf);
 
 #ifdef __cplusplus
 }
