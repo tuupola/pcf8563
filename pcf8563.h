@@ -97,10 +97,10 @@ extern "C" {
 
 /* These should be provided by the HAL. */
 typedef struct {
-    int32_t (*read)(
+    int (*read)(
         void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
     );
-    int32_t (*write)(
+    int (*write)(
         void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size
     );
     void *handle;

@@ -46,7 +46,7 @@ static inline uint8_t bcd2decimal(uint8_t bcd) {
 
 int pcf8563_init(const pcf8563_t *pcf) {
     uint8_t clear = 0x00;
-    int32_t status;
+    int status;
 
     status = pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS1, &clear, 1);
 
@@ -61,7 +61,7 @@ int pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
     uint8_t bcd;
     uint8_t data[PCF8563_TIME_SIZE] = {0};
     uint16_t century;
-    int32_t status;
+    int status;
 
     status =
         pcf->read(pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE);

@@ -39,7 +39,7 @@ SPDX-License-Identifier: MIT
 
 uint8_t memory[255] = {0};
 
-int32_t mock_i2c_read(
+int mock_i2c_read(
     void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
 ) {
     (void)handle;
@@ -48,7 +48,7 @@ int32_t mock_i2c_read(
     return PCF8563_OK;
 }
 
-int32_t mock_i2c_write(
+int mock_i2c_write(
     void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size
 ) {
     (void)handle;
@@ -57,7 +57,7 @@ int32_t mock_i2c_write(
     return PCF8563_OK;
 }
 
-int32_t mock_i2c_low_voltage_read(
+int mock_i2c_low_voltage_read(
     void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
 ) {
     (void)handle;
@@ -67,7 +67,7 @@ int32_t mock_i2c_low_voltage_read(
     return PCF8563_OK;
 }
 
-int32_t mock_failing_i2c_read(
+int mock_failing_i2c_read(
     void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
 ) {
     (void)handle;
@@ -78,7 +78,7 @@ int32_t mock_failing_i2c_read(
     return MOCK_I2C_ERROR;
 }
 
-int32_t mock_failing_i2c_write(
+int mock_failing_i2c_write(
     void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size
 ) {
     (void)handle;
