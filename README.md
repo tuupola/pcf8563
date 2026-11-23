@@ -6,11 +6,11 @@
 To use this library you must to provide functions for both reading and writing the I2C bus. Function definitions must be the following.
 
 ```c
-int i2c_read(void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, size_t size);
-int i2c_write(void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, size_t size);
+int i2c_read(void *context, uint8_t address, uint8_t reg, uint8_t *buffer, size_t size);
+int i2c_write(void *context, uint8_t address, uint8_t reg, const uint8_t *buffer, size_t size);
 ```
 
-Where `address` is the I2C address, `reg` is the register to read or write, `buffer` holds the data to write or read into and `size` is the amount of data to read or write. The `handle` parameter is an optional customizable argument. You can use it if your I2C implementation requires any additional information such has number of the hardware I2C driver. For example function implementations see [ESP I2C helper](https://github.com/tuupola/esp_i2c_helper). For working example see [M5StickC kitchen sink](https://github.com/tuupola/esp_m5stick).
+Where `address` is the I2C address, `reg` is the register to read or write, `buffer` holds the data to write or read into and `size` is the amount of data to read or write. The `context` parameter is an optional customizable argument. You can use it if your I2C implementation requires any additional information such has number of the hardware I2C driver. For example function implementations see [ESP I2C helper](https://github.com/tuupola/esp_i2c_helper). For working example see [M5StickC kitchen sink](https://github.com/tuupola/esp_m5stick).
 
 ## Read RTC date and time
 
@@ -28,8 +28,8 @@ pcf8563_t pcf;
 pcf.read = &user_i2c_read;
 pcf.write = &user_i2c_write;
 
-/* You could set the handle here. It can be pointer to anything. */
-pcf.handle = NULL;
+/* You could set the context here. It can be pointer to anything. */
+pcf.context = NULL;
 
 pcf8563_init(&pcf);
 pcf8563_read(&pcf, &rtc);
@@ -54,8 +54,8 @@ pcf8563_t pcf;
 pcf.read = &user_i2c_read;
 pcf.write = &user_i2c_write;
 
-/* You could set the handle here. It can be pointer to anything. */
-pcf.handle = NULL;
+/* You could set the context here. It can be pointer to anything. */
+pcf.context = NULL;
 
 /* 2020-12-31 23:59:45, Thursday */
 rtc.tm_year = 2020 - 1900;
