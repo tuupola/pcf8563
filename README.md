@@ -156,8 +156,8 @@ while (1) {
         printf("Timer!\n");
 
         /* Clear timer flag. */
-        tmp &= ~PCF8563_TF;
-        pcf8563_ioctl(&pcf, PCF8563_CONTROL_STATUS2_WRITE, &tmp);
+        control &= ~PCF8563_TF;
+        pcf8563_ioctl(&pcf, PCF8563_CONTROL_STATUS2_WRITE, &control);
     }
 }
 
