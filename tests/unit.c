@@ -308,6 +308,36 @@ TEST should_close(void) {
     PASS();
 }
 
+TEST should_calculate_yday(void) {
+    struct tm datetime = {0};
+    struct tm datetime2 = {0};
+    pcf8563_t bm;
+
+    bm.read = &mock_i2c_read;
+    bm.write = &mock_i2c_write;
+
+    /* 1973-11-27 */
+    datetime.tm_sec = 0;
+    datetime.tm_min = 0;
+    datetime.tm_hour = 12;
+    datetime.tm_mday = 27;
+    datetime.tm_mon = 11 - 1;
+    datetime.tm_year = 1973 - 1900;
+    datetime.tm_wday = 2;
+
+    ASSERT(PCF8563_OK == pcf8563_init(&bm));
+    ASSERT(PCF8563_OK == pcf8563_write(&bm, &datetime));
+
+    ASSERT(PCF8563_OK == pcf8563_read(&bm, &datetime2));
+    ASSERT_EQ(2, datetime2.tm_wday);
+    ASSERT_EQ(330, datetime2.tm_yday);
+    ASSERT_EQ(27, datetime2.tm_mday);
+    ASSERT_EQ(10, datetime2.tm_mon);
+    ASSERT_EQ(12, datetime2.tm_hour);
+
+    PASS();
+}
+
 TEST bug_4_should_set_alarm_weekday(void) {
     struct tm datetime = {0};
     struct tm datetime2 = {0};
@@ -355,6 +385,7 @@ int main(int argc, char **argv) {
     RUN_TEST(should_return_error_for_invalid_ioctl);
     RUN_TEST(should_fail_alarm_read);
     RUN_TEST(should_close);
+    RUN_TEST(should_calculate_yday);
 
     RUN_TEST(bug_4_should_set_alarm_weekday);
 
