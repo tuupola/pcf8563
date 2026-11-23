@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2020-2021 Mika Tuupola
+Copyright (c) 2020-2026 Mika Tuupola
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -97,22 +97,20 @@ extern "C" {
 
 /* These should be provided by the HAL. */
 typedef struct {
-    int32_t (*read)(
+    int (*read)(
         void *handle, uint8_t address, uint8_t reg, uint8_t *buffer, uint16_t size
     );
-    int32_t (*write)(
+    int (*write)(
         void *handle, uint8_t address, uint8_t reg, const uint8_t *buffer, uint16_t size
     );
     void *handle;
 } pcf8563_t;
 
-typedef int32_t pcf8563_err_t;
-
-pcf8563_err_t pcf8563_init(const pcf8563_t *pcf);
-pcf8563_err_t pcf8563_read(const pcf8563_t *pcf, struct tm *time);
-pcf8563_err_t pcf8563_write(const pcf8563_t *pcf, const struct tm *time);
-pcf8563_err_t pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer);
-pcf8563_err_t pcf8563_close(const pcf8563_t *pcf);
+int pcf8563_init(const pcf8563_t *pcf);
+int pcf8563_read(const pcf8563_t *pcf, struct tm *time);
+int pcf8563_write(const pcf8563_t *pcf, const struct tm *time);
+int pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer);
+int pcf8563_close(const pcf8563_t *pcf);
 
 #ifdef __cplusplus
 }

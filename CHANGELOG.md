@@ -5,14 +5,21 @@ All notable changes to this project will be documented in this file, in reverse 
 ## [0.6.0](https://github.com/tuupola/pcf8563/compare/0.5.0...master) - unreleased
 
 ### Fixed
+
 - Cmake when not using ESP-IDF ([#6](https://github.com/tuupola/pcf8563/pull/6))
+
+### Changed
+
+- Return values are now int everywhere ([#8](https://github.com/tuupola/pcf8563/pull/8))
 
 ## [0.5.0](https://github.com/tuupola/pcf8563/compare/0.4.0...0.5.0) - 2025-12-08
 
 ### Fixed
+
 - PCF8563_ALARM_SET confused mday and wday ([#5](https://github.com/tuupola/pcf8563/pull/5))
 
 ### Added
+
 - Improve code coverage ([#3](https://github.com/tuupola/pcf8563/pull/3))
 
 ## 0.4.0 - 2020-05-10
