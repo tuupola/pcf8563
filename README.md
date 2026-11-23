@@ -57,10 +57,11 @@ pcf.write = &user_i2c_write;
 /* You could set the handle here. It can be pointer to anything. */
 pcf.handle = NULL;
 
-/* 2020-12-31 23:59:45 */
+/* 2020-12-31 23:59:45, Thursday */
 rtc.tm_year = 2020 - 1900;
 rtc.tm_mon = 12 - 1;
 rtc.tm_mday = 31;
+rtc.tm_wday = 4;
 rtc.tm_hour = 23;
 rtc.tm_min = 59;
 rtc.tm_sec = 45;
