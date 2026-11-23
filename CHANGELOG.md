@@ -14,7 +14,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Dependency to `mktime() ([#9](https://github.com/tuupola/pcf8563/pull/9))
+- Dependency to `mktime()` ([#9](https://github.com/tuupola/pcf8563/pull/9))
 
 ## [0.5.0](https://github.com/tuupola/pcf8563/compare/0.4.0...0.5.0) - 2025-12-08
 
