@@ -44,6 +44,28 @@ static inline uint8_t bcd2decimal(uint8_t bcd) {
     return (((bcd >> 4) * 10) + (bcd & 0x0f));
 }
 
+static int day_of_year(int year, int month, int mday) {
+    int yday;
+    static const uint16_t days_before[12] = {
+        0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334,
+    };
+
+    /* Reject invalid dates. */
+    if ((month < 0) || (month > 11) || (mday < 1) || (mday > 31)) {
+        return -1;
+    }
+
+    yday = days_before[month] + mday - 1;
+
+    /* Handle leap day. */
+    if ((month > 1) && (0 == (year % 4)) &&
+        ((0 != (year % 100)) || (0 == (year % 400)))) {
+        yday++;
+    }
+
+    return yday;
+}
+
 int pcf8563_init(const pcf8563_t *pcf) {
     uint8_t clear = 0x00;
     int status;
@@ -102,7 +124,7 @@ int pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
     time->tm_year = bcd2decimal(bcd) + century;
 
     /* Calculate tm_yday. */
-    mktime(time);
+    time->tm_yday = day_of_year(time->tm_year + 1900, time->tm_mon, time->tm_mday);
 
     /* low voltage warning */
     if (data[0] & 0b10000000) {
