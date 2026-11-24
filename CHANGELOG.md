@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Return values are now `int` everywhere ([#8](https://github.com/tuupola/pcf8563/pull/8))
 - Sizes are now `size_t` everywheren ([#10](https://github.com/tuupola/pcf8563/pull/10))
+- Parameter `handle` was renamed to `context` ([#11](https://github.com/tuupola/pcf8563/pull/11))
 
 ### Removed
 

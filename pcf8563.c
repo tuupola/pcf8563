@@ -70,13 +70,13 @@ int pcf8563_init(const pcf8563_t *pcf) {
     uint8_t clear = 0x00;
     int status;
 
-    status = pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS1, &clear, 1);
+    status = pcf->write(pcf->context, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS1, &clear, 1);
 
     if (PCF8563_OK != status) {
         return status;
     }
 
-    return pcf->write(pcf->handle, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS2, &clear, 1);
+    return pcf->write(pcf->context, PCF8563_ADDRESS, PCF8563_CONTROL_STATUS2, &clear, 1);
 }
 
 int pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
@@ -86,7 +86,7 @@ int pcf8563_read(const pcf8563_t *pcf, struct tm *time) {
     int status;
 
     status =
-        pcf->read(pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE);
+        pcf->read(pcf->context, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE);
 
     if (PCF8563_OK != status) {
         return status;
@@ -172,7 +172,7 @@ int pcf8563_write(const pcf8563_t *pcf, const struct tm *time) {
     data[6] = bcd & 0b11111111;
 
     return pcf->write(
-        pcf->handle, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE
+        pcf->context, PCF8563_ADDRESS, PCF8563_SECONDS, data, PCF8563_TIME_SIZE
     );
 }
 
@@ -218,7 +218,7 @@ int pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer) {
             }
 
             return pcf->write(
-                pcf->handle, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE
+                pcf->context, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE
             );
 
             break;
@@ -228,7 +228,7 @@ int pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer) {
 
             /* 0..59 */
             status =
-                pcf->read(pcf->handle, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE);
+                pcf->read(pcf->context, PCF8563_ADDRESS, reg, data, PCF8563_ALARM_SIZE);
 
             if (PCF8563_OK != status) {
                 return status;
@@ -272,14 +272,14 @@ int pcf8563_ioctl(const pcf8563_t *pcf, int16_t command, void *buffer) {
         case PCF8563_CONTROL_STATUS2_READ:
         case PCF8563_TIMER_CONTROL_READ:
         case PCF8563_TIMER_READ:
-            return pcf->read(pcf->handle, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1);
+            return pcf->read(pcf->context, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1);
             break;
 
         case PCF8563_CONTROL_STATUS1_WRITE:
         case PCF8563_CONTROL_STATUS2_WRITE:
         case PCF8563_TIMER_CONTROL_WRITE:
         case PCF8563_TIMER_WRITE:
-            return pcf->write(pcf->handle, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1);
+            return pcf->write(pcf->context, PCF8563_ADDRESS, reg, (uint8_t *)buffer, 1);
             break;
     }
 
